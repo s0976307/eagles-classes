@@ -1,0 +1,1557 @@
+[OBSERVE] Briefing acquired — MAT 102A Excel Case Study 1. No question attached to it, so here's what I verified and what I'd flag before you start.
+
+Verified state
+
+%USERPROFILE%\Downloads\SleepStudy.csv — 253 data rows, 27 columns, header row 1. Matches the handout's claim exactly, so the C$2:C$254 ranges in the instructions are correct.
+Desktop\MAT 102A\ exists but holds only MAT-102A-TEST-1-AID.html. The CSV is not in it yet.
+No MAT 102A syllabus in this workspace. I have no verified late policy, rubric, or "formal outlier rule as discussed in class" for this course — anything I say about those is inference, and I'll label it.
+Column letters (you'll need these; the handout only gives you C)
+
+Variable	Column
+LarkOwl	C
+CognitionZscore	H
+PoorSleepQuality	I
+Stress	O
+DASScore	P
+AlcoholUse	R
+Last data column is AA, so the handout's AG staging area is safely clear.
+
+Four errors/traps in the handout itself
+
+Q1, bullet 2 — the prose says "counts how many cells from A2 to A254." That's wrong; the formula it gives you (C$2:C$254) is right. Trust the formula, ignore the prose.
+Q1h — "highlight the entire frequency distribution" for the pie chart. Do not include the Total row (AG5:AH5) or you'll get a pie where half of it is the total. Use AG1:AH4, same as the bar chart.
+Q3h — Excel's QUARTILE uses a different interpolation method than the median-of-each-half technique most intro courses teach by hand. Your Excel Q1/Q3 may not match your hand-computed values. The assignment tells you to use QUARTILE, so use it — but check your class notes for which method was taught, because that also determines the fence rule in 3i/3j.
+Header spelling — actual header is CognitionZscore (lowercase s). The handout writes it two other ways.
+The conceptual trap in Q4 — 4b, 4c, and 4d have three different denominators:
+
+4b: high-stress ÷ 253 (all students)
+4c: Lark-and-high-stress ÷ all high-stress students
+4d: high-stress-and-Lark ÷ all Larks (then repeat per group)
+4c and 4d get confused constantly and produce different numbers from the same two-way table. If you can articulate why, you've got the actual skill the question tests.
+
+Q5f is the real question on the page. Observational study, no random assignment, so no. Name the mechanism — confounding, and the specific confounder the source paper itself identifies (late class schedules drive both). The abstract at the bottom of your handout is the hint.
+
+How do you want to run this? Three options:
+
+Live, question by question — you do each Excel step, tell me your numbers, I check them and we move on. Slowest, sticks best.
+Blueprint first — I write you a worksheet plan (which cells, which formulas, which chart types, what to look for in each answer) and you execute the whole thing, then bring me your numbers to verify.
+Check-only — you've already done some of it and want the numbers audited.
+Say which. Also: want the CSV copied into Desktop\MAT 102A\ so your work isn't sitting in Downloads?
+
+scaffold and reason
+and move csv
+[OBSERVE] Option 2. Building the scaffold now — cell-level formula plan plus the reasoning behind each question. You execute in Excel; I verify your numbers after.
+
+Write %USERPROFILE%\Desktop\MAT 102A\CASE-STUDY-1-SCAFFOLD.md
+450 lines
+# MAT 102A — Excel Case Study 1: Scaffold & Reasoning
+
+**Dataset:** `SleepStudy.csv` — 253 data rows (rows 2–254), 27 columns (A–AA). Verified 2026-09-30.
+**Deliverable:** single PDF, all plots pasted in, submitted in Canvas.
+
+> This file is a **blueprint**. It gives you the cell layout, the formulas, and the
+> reasoning each question is testing. It does not contain the answers — you run Excel,
+> you read the output, you write the interpretation. Bring your numbers back for a check.
+
+---
+
+## 0. Setup
+
+### Column map (you need these; the handout only gives you C)
+
+| Variable | Column | Type |
+|---|---|---|
+| LarkOwl | **C** | categorical (Lark / Owl / Neither) |
+| CognitionZscore | **H** | quantitative (z-score) |
+| PoorSleepQuality | **I** | quantitative (0–20, integer) |
+| Stress | **O** | categorical (`normal` / `high`) |
+| DASScore | **P** | quantitative (0–100) |
+| AlcoholUse | **R** | categorical, **ordinal** (Abstain < Light < Moderate < Heavy) |
+
+Last data column is `AA`. Everything from `AC` rightward is free staging space.
+
+### Staging-block plan (keeps the five questions from colliding)
+
+| Block | Columns | Holds |
+|---|---|---|
+| Q1 | AG:AI | circadian frequency + relative frequency |
+| Q2 | AK:AL | DASScore min/max/mean/median |
+| Q3 | AN:AO | PoorSleepQuality descriptive battery |
+| Q4 | AQ:AU | Stress × LarkOwl two-way table + proportions |
+| Q5 | AW:AX, BB:BE | boxplot staging + group stats |
+
+### Two data notes before you start
+
+1. **Case.** The `Stress` column contains `normal` and `high` in **lowercase**. `COUNTIF`
+   and `COUNTIFS` are case-insensitive, so typing `High` in your table label still matches.
+   No problem — just don't be surprised when the spellings differ.
+2. **Handout typo.** Q1 bullet 2 says the formula "counts how many cells from A2 to A254."
+   Wrong — the formula it gives you (`C$2:C$254`) is correct. Trust the formula.
+
+---
+
+## Q1 — Circadian preference (relative frequency distribution)
+
+### Reasoning first
+
+`LarkOwl` is **categorical**. You cannot take a mean of "Lark." The only meaningful
+summaries are **counts** and **proportions**, which is exactly why the question asks for a
+frequency distribution rather than a mean.
+
+The two paragraphs the handout drops *after* Q1 are not decoration — they're the
+interpretive setup:
+
+- Past studies: ~10% Lark, ~20% Owl, ~70% Neither.
+- Circadian preference "may not be settled until 22 years of age or later."
+
+So when you compare your sample proportions to those benchmarks, the second fact is your
+explanation for any excess of "Neither" in a college-age sample. **That comparison is one
+of your strongest candidates for the Q6 summary.** Q1 by itself is just counting; the
+comparison is the statistics.
+
+### Scaffold
+
+| Cell | Content |
+|---|---|
+| AG1 | `Circadian Preference` |
+| AG2 | `Lark` |
+| AG3 | `Owl` |
+| AG4 | `Neither` |
+| AG5 | `Total` |
+| AH1 | `Frequency` |
+| AH2 | `=COUNTIF($C$2:$C$254,AG2)` |
+| AH3:AH4 | fill AH2 down |
+| AH5 | `=SUM(AH2:AH4)` |
+| AI1 | `Relative Frequency` |
+| AI2 | `=AH2/$AH$5` |
+| AI3:AI4 | fill AI2 down |
+| AI5 | `=SUM(AI2:AI4)` |
+
+**Why the `$` in `$AH$5`:** the handout has you retype `=AH3/AH5` and `=AH4/AH5` by hand.
+Anchoring the denominator with `$AH$5` lets you fill down instead, and it's the habit that
+prevents errors later in Q4 where you fill in two directions at once.
+
+**Self-check:** `AH5` must read **253**. `AI5` must read **1** (or 100% — it may display
+0.999999 before formatting; that's floating point, not an error).
+
+### Charts
+
+- **1g bar chart** — select `AG1:AH4`. Insert → Recommended Charts → Clustered Column.
+  *Not* the Total row, *not* the relative-frequency column.
+- **1h pie chart** — select `AG1:AH4` again. **The handout says "the entire frequency
+  distribution" here, which is ambiguous and will bite you.** If you include `AG5:AH5`, the
+  Total becomes its own slice and eats half the pie. Same range as 1g.
+- Retitle both. "Chart Title" left as-is costs points on any rubric.
+
+### Answering a–f
+
+Read them straight off the table. For c/d/e, give the **proportion** (decimal or %),
+not the count — the question says proportion.
+
+---
+
+## Q2 — DASScore histogram
+
+### Reasoning first
+
+`DASScore` is quantitative, so now shape, center, and spread are all on the table. A
+histogram answers **shape**.
+
+Predict before you plot: DASScore is bounded below at 0 and most college students are not
+severely distressed. A hard floor with room to run upward almost always produces a
+**right skew** (long tail toward high values). Plot it and see whether that holds.
+
+**Skew vocabulary trap:** skew is named for the direction of the *tail*, not where the
+bulk of the data sits. A pile-up on the left with a tail stretching right is skewed
+**right**, even though it "leans left" visually.
+
+### Scaffold
+
+| Cell | Content |
+|---|---|
+| AK1 | `DASScore` |
+| AK2 | `Minimum` → AL2 `=MIN($P$2:$P$254)` |
+| AK3 | `Maximum` → AL3 `=MAX($P$2:$P$254)` |
+| AK4 | `Mean` → AL4 `=AVERAGE($P$2:$P$254)` |
+| AK5 | `Median` → AL5 `=MEDIAN($P$2:$P$254)` |
+
+**Get 2b/2c from `MIN`/`MAX`, not from the histogram's axis.** Excel picks round bin edges,
+so the leftmost bin might start at 0 when your true minimum is something else, and the
+rightmost bin will overshoot your true maximum. The chart is for shape; the formulas are
+for values.
+
+**Mean vs. median is your skew confirmation** (rows AL4/AL5):
+
+- mean > median → pulled right by a long right tail → **skewed right**
+- mean ≈ median → **roughly symmetric**
+- mean < median → **skewed left**
+
+This is a cross-check on your eyeball reading of 2d, not a replacement for it. If the
+chart and the mean/median disagree, something is wrong — tell me.
+
+### Chart
+
+Select column P (header included) → Insert → Recommended Charts → Histogram. Retitle.
+
+---
+
+## Q3 — PoorSleepQuality descriptive battery
+
+### Reasoning first
+
+This is the full toolkit on one variable: **center** (mean, median, mode), **spread**
+(SD, range, IQR), **position** (quartiles), **unusual values** (fences, outliers), and then
+a boxplot that should visually reproduce everything you just computed. Part (l) — "is this
+consistent with a–k" — is the actual point of the question. You are being asked to verify
+that a picture and a table tell the same story.
+
+### Scaffold
+
+Labels in AN, formulas in AO.
+
+| Row | AN (label) | AO (formula) |
+|---|---|---|
+| 1 | `PoorSleepQuality` | `Value` |
+| 2 | `Mean` | `=AVERAGE($I$2:$I$254)` |
+| 3 | `Median` | `=MEDIAN($I$2:$I$254)` |
+| 4 | `Mode` | `=MODE($I$2:$I$254)` |
+| 5 | `StDev (sample)` | `=STDEV.S($I$2:$I$254)` |
+| 6 | `Maximum` | `=MAX($I$2:$I$254)` |
+| 7 | `Minimum` | `=MIN($I$2:$I$254)` |
+| 8 | `Range` | `=AO6-AO7` |
+| 9 | `Q1` | `=QUARTILE($I$2:$I$254,1)` |
+| 10 | `Q3` | `=QUARTILE($I$2:$I$254,3)` |
+| 11 | `IQR` | `=AO10-AO9` |
+| 12 | `Lower fence` | `=AO9-1.5*AO11` |
+| 13 | `Upper fence` | `=AO10+1.5*AO11` |
+| 14 | `# below lower fence` | `=COUNTIF($I$2:$I$254,"<"&AO12)` |
+| 15 | `# above upper fence` | `=COUNTIF($I$2:$I$254,">"&AO13)` |
+
+For **3k — "if so, what are they"** you need the actual values, not just a count. Pull the
+largest values down and compare each to your upper fence:
+
+| Cell | Content |
+|---|---|
+| AN17 | `Largest values` |
+| AO17 | `=LARGE($I$2:$I$254,1)` |
+| AO18 | `=LARGE($I$2:$I$254,2)` |
+| AO19 | `=LARGE($I$2:$I$254,3)` |
+
+Fill down until a value drops below your upper fence — everything above the fence is an
+outlier, and you list those. Mirror with `SMALL(...)` if `AO14` is nonzero.
+
+### Four traps in this block
+
+1. **`STDEV.S` vs `STDEV.P`.** The question says *sample* standard deviation. `STDEV.S`
+   divides by n−1. `STDEV.P` divides by n and is the wrong answer here.
+2. **`MODE` returns only one value.** If two values tie for most frequent, Excel silently
+   reports whichever appears first in the column. Worth a sentence in your writeup if you
+   suspect a tie. (If nothing repeated at all, `MODE` would return `#N/A` — not an issue
+   with 253 integer scores on a 0–20 scale, but that's what the error would mean.)
+3. **`QUARTILE` may not match your hand calculation.** Excel's `QUARTILE` (= `QUARTILE.INC`)
+   interpolates between data points. Many intro courses teach "median of the lower half,"
+   which is `QUARTILE.EXC`-like and can give a different number. **The assignment tells you
+   to use `QUARTILE`, so use `QUARTILE`** — but if your class notes define quartiles the
+   other way, say so in one line so the grader knows you noticed rather than blundered.
+4. **The fence rule.** *Inference, not verified for this course:* the standard formal rule
+   is `Q1 − 1.5×IQR` and `Q3 + 1.5×IQR`, which is what the scaffold above uses. Confirm
+   against your class notes before you commit — the question says "the formal rule
+   discussed in class," and I have no MAT 102A notes to verify against.
+
+### Boxplot (3l)
+
+Select column I (header included) → Insert → Charts → Statistical → Box and Whisker.
+
+**Turn on the outlier points.** Right-click the box → Format Data Series → check
+**Show outlier points** (and **Show mean markers**, which lets you see mean vs. median
+in one glance). Excel does not always enable these by default, and without them you
+cannot answer 3l honestly.
+
+**What "consistent" means for your writeup — check all four:**
+
+- Box bottom = your `Q1`, box top = your `Q3`, line inside = your `Median`.
+- Whisker ends stop at the most extreme values *inside* the fences — not at min/max.
+- The plotted outlier dots match exactly the values you listed in 3k.
+- Mean marker sits above the median line if the data is right-skewed. Compare to `AO2`/`AO3`.
+
+---
+
+## Q4 — Stress × Circadian preference (two-way table)
+
+### Reasoning first
+
+Two categorical variables. The question "is there a relationship" becomes: **does the
+proportion reporting high stress change depending on circadian group?** If all three groups
+report high stress at about the same rate, there's no association. If they differ
+substantially, there is.
+
+**This is the question students lose points on, and here is exactly why.** Parts b, c, and
+d all ask for "a proportion" but use three different denominators:
+
+| Part | Numerator | Denominator | Name |
+|---|---|---|---|
+| **4b** | all high-stress students | **253** (everyone) | marginal proportion |
+| **4c** | Lark **and** high stress | all **high-stress** students | conditional on *stress* |
+| **4d** | Lark **and** high stress | all **Larks** | conditional on *circadian group* |
+
+4c and 4d have the *same numerator* and different denominators, so they give different
+numbers. If you can say out loud why "the proportion of high-stress students who are Larks"
+and "the proportion of Larks who are high-stress" are different questions, you have the
+skill this question tests. Only **4d** answers "is there a relationship" — it holds the
+group fixed and compares stress rates across groups.
+
+### Scaffold — the table
+
+|  | AQ | AR | AS | AT | AU |
+|---|---|---|---|---|---|
+| **1** | *(leave blank)* | `Lark` | `Owl` | `Neither` | `Total` |
+| **2** | `high` | formula ↓ | | | `=SUM(AR2:AT2)` |
+| **3** | `normal` | | | | `=SUM(AR3:AT3)` |
+| **4** | `Total` | `=SUM(AR2:AR3)` | | | `=SUM(AR4:AT4)` |
+
+`AR2` = `=COUNTIFS($O$2:$O$254,$AQ2,$C$2:$C$254,AR$1)`
+
+Then fill `AR2` right to `AT2` and down to row 3 — all four count cells come from that one
+formula.
+
+**The mixed references are the lesson here.** `$AQ2` locks the *column* (row labels always
+come from AQ) but lets the row float. `AR$1` locks the *row* (column headers always come
+from row 1) but lets the column float. That's what makes one formula fill in two directions.
+Get this and two-way tables stop being tedious.
+
+**Self-check:** `AU4` must be **253**. Also confirm `=SUM(AU2:AU3)` equals `=SUM(AR4:AT4)` —
+summing the margins two different ways is a free error check.
+
+### Scaffold — the three proportions
+
+| Cell | Content | Answers |
+|---|---|---|
+| AQ6 | `4b: P(high stress)` → AR6 `=AU2/$AU$4` | 4b |
+| AQ7 | `4c: P(Lark given high)` → AR7 `=AR2/$AU$2` | 4c |
+| AQ8 | `4d: P(high given group)` → AR8 `=AR2/AR$4`, fill right to AT8 | 4d, 4e |
+
+For **4e**, read the smallest of the three values in `AR8:AT8`.
+
+### Chart (4a)
+
+Select `AQ1:AT3` — the counts only, no Total row, no Total column. Insert → Clustered Column.
+
+- **"Side-by-side" means clustered, not stacked.** If your bars sit on top of each other,
+  you picked the wrong subtype.
+- Excel guesses which variable becomes the category axis and which becomes the series.
+  If it guesses wrong, use **Chart Design → Switch Row/Column**. For answering 4d, you
+  want **circadian group on the axis** with high/normal as the two series, so the three
+  groups sit side by side for comparison.
+- Retitle. Add a legend if Excel dropped it.
+
+### One caution worth writing down
+
+Check your `AR4` (number of Larks) before you lean on 4e. If that group is small, its high-
+stress proportion is computed from few students and is unstable — a couple of different
+students would move it noticeably. Naming that limitation is a better answer than stating
+the winner with false confidence. The handout's own "~10% are Larks" benchmark should tell
+you what to expect here.
+
+---
+
+## Q5 — Alcohol use vs. cognition
+
+### Reasoning first
+
+One categorical variable (`AlcoholUse`, and note it's **ordinal** — the categories have a
+natural order) against one quantitative variable (`CognitionZscore`). Side-by-side boxplots
+are the right display: one box per alcohol group, compared on a shared axis.
+
+`CognitionZscore` is a **z-score**, which is doing you a favor: it's already standardized,
+so 0 is roughly average cognitive performance and the units are standard deviations. A
+difference of 0.1 between group means is small. A difference of 0.8 is large. You don't
+need extra context to judge magnitude.
+
+**5f is the most important question on the page.** The answer is no, and the reason has a
+name. This is an **observational study** — students self-reported their drinking; nobody
+randomly assigned anyone to drink heavily. So the groups differ in many ways besides
+alcohol, and any of those could produce a cognition difference. That's **confounding**.
+
+The abstract printed at the bottom of your handout hands you a concrete confounder: students
+with later class start times were *both* more likely to misuse alcohol *and* different in
+sleep and academic outcomes. Class schedule is a plausible common cause sitting behind both
+variables. Naming a specific mechanism beats reciting "correlation is not causation."
+
+There's a second point worth a clause: **reverse causation** is not ruled out either.
+Nothing in this design establishes that drinking came before the cognitive difference.
+
+### Scaffold — boxplot staging (AW:AX)
+
+Excel's Box and Whisker chart will group for you **if** you hand it a category column
+immediately left of a value column. `AlcoholUse` (R) and `CognitionZscore` (H) are not
+adjacent and are in the wrong order, so copy them into a clean two-column block:
+
+| Cell | Content |
+|---|---|
+| AW1 | `AlcoholUse` |
+| AX1 | `CognitionZscore` |
+| AW2 | `=$R2` |
+| AX2 | `=$H2` |
+| AW2:AX254 | fill both down to row 254 |
+
+Then select `AW1:AX254` → Insert → Charts → Statistical → Box and Whisker.
+
+**Again: Format Data Series → Show outlier points.** Question 5c asks which group has an
+outlier. Without that checkbox on, the plot cannot answer it.
+
+*Optional polish:* Excel will order the four boxes alphabetically (Abstain, Heavy, Light,
+Moderate), which scrambles the natural Abstain → Light → Moderate → Heavy progression. If
+you want them in order, paste `AW:AX` as values, add a helper column numbering the groups
+1–4, and sort by it. Not required, but an ordinal variable displayed out of order slightly
+undercuts the trend you're describing in 5g.
+
+### Scaffold — group statistics (BB:BE)
+
+| Row | BB (group) | BC (`n`) | BD (proportion) | BE (mean z) |
+|---|---|---|---|---|
+| 1 | `AlcoholUse` | `n` | `Proportion` | `Mean CognitionZscore` |
+| 2 | `Abstain` | `=COUNTIF($R$2:$R$254,BB2)` | `=BC2/$BC$6` | `=AVERAGEIF($R$2:$R$254,BB2,$H$2:$H$254)` |
+| 3 | `Light` | fill down | fill down | fill down |
+| 4 | `Moderate` | | | |
+| 5 | `Heavy` | | | |
+| 6 | `Total` | `=SUM(BC2:BC5)` | `=SUM(BD2:BD5)` | — |
+
+**Self-check:** `BC6` = 253, `BD6` = 1. If `BC6` is short of 253, a category label is
+misspelled or there's a fifth category you didn't account for.
+
+- **5b** → the `Heavy` row of column BD.
+- **5c** → read the boxplot (outlier points must be enabled).
+- **5d / 5e** → highest and lowest values in `BE2:BE5`.
+
+### 5g — "strong association?" How to judge it
+
+Don't guess. Use two comparisons:
+
+1. **Spread of the group means vs. the spread within groups.** Your four means live in
+   `BE2:BE5`. If the gap between the highest and lowest is small compared to the height of
+   a typical box on your chart, the association is weak — alcohol group barely moves
+   cognition relative to how much students within a single group already differ.
+2. **Box overlap.** If all four boxes overlap heavily on the vertical axis, knowing a
+   student's alcohol group tells you almost nothing about their cognition score. Clear
+   separation would mean a strong association.
+
+Then connect it back: **a weak association makes the 5f answer even easier.** You can't
+claim causation from an observational study regardless — but it's especially unwarranted
+when the association itself is small. Note also that `Heavy` is likely the smallest group
+(check `BC5`), so whatever you observed about it in 5c/5d rests on few students.
+
+---
+
+## Q6 — Summary paragraph
+
+The instruction is one important finding per question. **Don't re-narrate the whole case
+study** — this is a results paragraph, not a walkthrough. What to pull:
+
+| From | The finding worth reporting |
+|---|---|
+| Q1 | Sample circadian breakdown **compared to** the 10%/20% benchmark, with the age explanation |
+| Q2 | Shape of the distress distribution and what it implies about typical vs. extreme students |
+| Q3 | Center and spread of sleep quality, plus whether outliers exist and what they represent |
+| Q4 | Whether high-stress rates differ by circadian group — the **4d** numbers, with the small-group caution |
+| Q5 | Direction and **size** of the cognition difference across alcohol groups, plus the explicit no-causation statement |
+
+Rules for the prose:
+
+- Every claim carries its number. "Most students were Neither" is weak; the proportion is the finding.
+- **Association language only.** "Higher alcohol use was associated with lower mean cognition
+  scores" — never "led to," "caused," "reduced," or "affected."
+- Name a limitation. Observational design, self-reported drinking and stress, single
+  institution, small subgroups. One sentence is enough and it reads as competence.
+- Past tense, third person, no "I clicked Insert → Chart."
+
+---
+
+## Execution order (so you don't rework)
+
+1. Open the CSV, immediately **Save As `.xlsx`** — `.csv` will not retain your charts or formulas.
+2. Build all five staging blocks and confirm every self-check total (253 three times, 1 twice).
+3. Only then build charts. A chart pointed at a broken table has to be rebuilt from scratch.
+4. Enable **Show outlier points** on both boxplots (Q3 and Q5) before screenshotting.
+5. Retitle every one of the six charts.
+6. Paste into Word, answer a–g under each, write Q6 last.
+7. Print to PDF. Confirm all six charts actually rendered in the PDF — pasted-as-object
+   charts sometimes drop.
+
+## Chart inventory (6 total — verify before submitting)
+
+- [ ] Q1g clustered column — circadian frequency
+- [ ] Q1h pie — circadian frequency
+- [ ] Q2a histogram — DASScore
+- [ ] Q3l box and whisker — PoorSleepQuality
+- [ ] Q4a clustered column — stress × circadian
+- [ ] Q5a box and whisker — cognition by alcohol group
+
+## Unverified for this course
+
+- The exact outlier-fence rule "discussed in class" (scaffold assumes 1.5×IQR).
+- Quartile convention taught (scaffold uses Excel's `QUARTILE` per the handout's instruction).
+- Rubric weighting and late policy — no MAT 102A syllabus in this workspace.
+
+Confirm the first two against your notes before you finalize Q3.
+PowerShell Move SleepStudy.csv to MAT 102A folder
+IN
+$src="$env:USERPROFILE\Downloads\SleepStudy.csv"; $dst="$env:USERPROFILE\Desktop\MAT 102A\SleepStudy.csv"; if (Test-Path $dst) { "DESTINATION ALREADY EXISTS - halted, nothing moved" } else { Move-Item -Path $src -Destination $dst; if ($?) { "Moved." } }
+
+OUT
+Moved.
+PowerShell Verify move and file integrity
+IN
+Get-ChildItem "$env:USERPROFILE\Desktop\MAT 102A" | Select-Object Name, Length, LastWriteTime | Format-Table -AutoSize; "--- source check ---"; if (Test-Path "$env:USERPROFILE\Downloads\SleepStudy.csv") { "STILL IN DOWNLOADS" } else { "Downloads copy gone (expected after move)" }; "--- integrity ---"; $l=Get-Content "$env:USERPROFILE\Desktop\MAT 102A\SleepStudy.csv"; "Lines: " + $l.Count
+
+OUT
+Name                     Length LastWriteTime       
+----                     ------ -------------       
+CASE-STUDY-1-SCAFFOLD.md  20301 9/30/2026 7:07:43 PM
+MAT-102A-TEST-1-AID.html  13176 9/30/2026 6:32:28 PM
+SleepStudy.csv            27625 9/30/2026 6:40:13 PM
+
+
+--- source check ---
+Downloads copy gone (expected after move)
+--- integrity ---
+Lines: 254
+Done. Both.
+
+Desktop\MAT 102A\
+
+SleepStudy.csv — moved from Downloads, 27,625 bytes, 254 lines intact
+CASE-STUDY-1-SCAFFOLD.md — 20 KB, new
+MAT-102A-TEST-1-AID.html — untouched
+What the scaffold gives you
+Mechanics — every cell and formula for five staging blocks (Q1 AG:AI, Q2 AK:AL, Q3 AN:AO, Q4 AQ:AU, Q5 AW:AX + BB:BE), laid out so nothing collides. Built-in arithmetic checks: three cells must read 253, two must read 1. If any of those is off, stop and fix the table before touching a chart.
+
+Reasoning — why each question uses the display it uses, and what the interpretation actually has to say.
+
+The five things that will cost you points if you don't know them
+Q1h pie chart. The handout says "highlight the entire frequency distribution." Follow that literally and the Total becomes a slice consuming half the pie. Use AG1:AH4, same as the bar chart.
+Q3 and Q5 boxplots. Excel doesn't reliably enable outlier markers by default. Right-click the box → Format Data Series → Show outlier points. Q3l and Q5c are unanswerable without it.
+Q4b/c/d are three different denominators — 253, then all high-stress students, then all students in one circadian group. 4c and 4d share a numerator and differ only in denominator, which is precisely why they get swapped. Only 4d answers "is there a relationship."
+Q2b/c from MIN/MAX, not off the histogram axis. Excel rounds bin edges; the chart's leftmost and rightmost values are not your data's min and max.
+.csv won't save charts or formulas. Save As .xlsx the moment you open it.
+Two conceptual centers
+Q5f is the heaviest question on the page. Observational study, self-reported drinking, no random assignment — so confounding. The abstract at the bottom of your own handout hands you the specific confounder: later class start times drive both alcohol misuse and the other outcomes. Naming that mechanism beats reciting "correlation isn't causation." Reverse causation isn't excluded either.
+
+Q1's payoff isn't the counting — it's comparing your proportions against the 10% Lark / 20% Owl benchmark, with the "not settled until 22" note as your explanation for a college sample skewing toward Neither. That's a Q6 finding.
+
+Unverified — check your notes before finalizing Q3
+The scaffold assumes the 1.5×IQR fence rule for 3i/3j. That's the standard rule and it's labeled as inference in the file, not fact: I have no MAT 102A syllabus or class notes in this workspace to verify against. Same for the quartile convention — Excel's QUARTILE interpolates and can disagree with the hand-computed "median of each half" method some intro courses teach. The assignment instructs you to use QUARTILE, so use it, but if your notes define it the other way, add one sentence saying so. A noted discrepancy reads as competence; an unexplained one reads as an error.
+
+Want the assignment prompt itself saved to that folder? You pasted it into chat, so it exists nowhere on disk — and the six-chart checklist at the end of the scaffold is only useful if the original requirements are next to it.
+
+visual please ame
+artifact-design skill
+Reference doc you'll work from next to Excel — utilitarian treatment, not a brochure. Design plan:
+
+Color — cool indigo-biased neutrals (#F7F7FB / #13141D) with the accent drawn from the study's own axis: deep indigo #3A3EA6 for structure (Owl/night), amber #9A5B00 reserved strictly for traps (Lark/dawn), green #1B6347 for the arithmetic self-checks. Semantic, not decorative.
+Type — Newsreader for headings (academic-paper gravity, it's a case study), IBM Plex Sans body, IBM Plex Mono for every formula and cell reference.
+Layout — sticky question rail plus a single content column. Scaffold tables render as actual mini-spreadsheets with column-letter and row-number gutters, so you read them like the sheet you're building. Square corners throughout — the material is a grid.
+
+Write %USERPROFILE%\Desktop\MAT 102A\CASE-STUDY-1-SCAFFOLD.html
+980 lines
+<title>Sleep Study Case Scaffold</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+
+<style>
+:root{
+  --ground:#F7F7FB;
+  --surface:#FFFFFF;
+  --surface-2:#F0F0F7;
+  --surface-3:#E8E9F2;
+  --border:#DDDEE9;
+  --border-strong:#BFC1D3;
+  --ink:#191A2B;
+  --ink-2:#474962;
+  --muted:#6C6F88;
+  --accent:#3A3EA6;
+  --accent-2:#5B5FC7;
+  --accent-soft:#ECECFA;
+  --caution:#8F5400;
+  --caution-soft:#FBF2E1;
+  --caution-edge:#E3C68C;
+  --verify:#1B6347;
+  --verify-soft:#E6F2EC;
+  --verify-edge:#A9CFBE;
+  --serif:"Newsreader",Georgia,"Times New Roman",serif;
+  --sans:"IBM Plex Sans","Segoe UI",Helvetica,Arial,sans-serif;
+  --mono:"IBM Plex Mono","Cascadia Mono",Consolas,monospace;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --ground:#13141D;
+    --surface:#1B1C27;
+    --surface-2:#222431;
+    --surface-3:#2A2C3B;
+    --border:#2F3141;
+    --border-strong:#454860;
+    --ink:#E9E9F2;
+    --ink-2:#BEC0D1;
+    --muted:#8C8FA6;
+    --accent:#9195F5;
+    --accent-2:#A8ABF8;
+    --accent-soft:#222545;
+    --caution:#E0A54C;
+    --caution-soft:#2C2517;
+    --caution-edge:#5C4A24;
+    --verify:#55C295;
+    --verify-soft:#152A22;
+    --verify-edge:#2C5444;
+  }
+}
+:root[data-theme="dark"]{
+  --ground:#13141D;
+  --surface:#1B1C27;
+  --surface-2:#222431;
+  --surface-3:#2A2C3B;
+  --border:#2F3141;
+  --border-strong:#454860;
+  --ink:#E9E9F2;
+  --ink-2:#BEC0D1;
+  --muted:#8C8FA6;
+  --accent:#9195F5;
+  --accent-2:#A8ABF8;
+  --accent-soft:#222545;
+  --caution:#E0A54C;
+  --caution-soft:#2C2517;
+  --caution-edge:#5C4A24;
+  --verify:#55C295;
+  --verify-soft:#152A22;
+  --verify-edge:#2C5444;
+}
+
+*{box-sizing:border-box}
+body{
+  background:var(--ground);
+  color:var(--ink);
+  font:400 15px/1.62 var(--sans);
+  -webkit-font-smoothing:antialiased;
+}
+.wrap{
+  display:grid;
+  grid-template-columns:200px minmax(0,1fr);
+  gap:44px;
+  max-width:1120px;
+  margin:0 auto;
+  padding:0 28px 96px;
+  align-items:start;
+}
+
+/* ---------- rail ---------- */
+.rail{position:sticky;top:0;padding:40px 0 0;display:flex;flex-direction:column;gap:18px}
+.rail-title{
+  font:500 11px/1 var(--sans);text-transform:uppercase;letter-spacing:.13em;
+  color:var(--muted);padding-bottom:10px;border-bottom:1px solid var(--border);
+}
+.rail nav{display:flex;flex-direction:column}
+.rail a{
+  display:flex;gap:9px;align-items:baseline;
+  padding:6px 0;text-decoration:none;color:var(--ink-2);
+  font-size:13.5px;border-bottom:1px solid var(--border);
+}
+.rail a:hover{color:var(--accent)}
+.rail a:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.rail a b{font:500 11px/1.5 var(--mono);color:var(--muted);min-width:1.9rem;font-variant-numeric:tabular-nums}
+.rail a:hover b{color:var(--accent)}
+.meter{
+  font:500 11px/1.5 var(--sans);letter-spacing:.06em;text-transform:uppercase;
+  color:var(--muted);background:var(--surface);border:1px solid var(--border);
+  padding:9px 11px;
+}
+.meter strong{color:var(--accent);font-family:var(--mono);font-size:13px;font-variant-numeric:tabular-nums}
+
+/* ---------- header ---------- */
+header{padding:52px 0 0}
+.eyebrow{
+  font:500 11px/1 var(--sans);text-transform:uppercase;letter-spacing:.15em;
+  color:var(--accent);margin:0 0 18px;
+}
+h1{
+  font:400 clamp(34px,5vw,52px)/1.08 var(--serif);
+  letter-spacing:-.018em;margin:0 0 14px;text-wrap:balance;
+}
+.standfirst{
+  font:400 17.5px/1.58 var(--serif);color:var(--ink-2);
+  max-width:60ch;margin:0 0 30px;
+}
+.facts{
+  display:flex;flex-wrap:wrap;gap:0;border:1px solid var(--border);
+  background:var(--surface);margin-bottom:12px;
+}
+.fact{padding:13px 20px;border-right:1px solid var(--border);flex:1 1 auto;min-width:112px}
+.fact:last-child{border-right:0}
+.fact dt{font:500 10.5px/1 var(--sans);text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:6px}
+.fact dd{margin:0;font:500 19px/1.1 var(--mono);color:var(--ink);font-variant-numeric:tabular-nums}
+.fact dd small{font:400 12px/1 var(--sans);color:var(--muted);letter-spacing:.02em}
+.verified{
+  font:400 12.5px/1.5 var(--sans);color:var(--muted);margin:0 0 4px;
+}
+.verified code{font:400 12px/1 var(--mono);color:var(--ink-2)}
+
+/* ---------- sections ---------- */
+section{padding-top:54px;scroll-margin-top:22px}
+h2{
+  font:500 27px/1.2 var(--serif);margin:0 0 6px;letter-spacing:-.012em;text-wrap:balance;
+  display:flex;gap:13px;align-items:baseline;
+}
+h2 .qn{
+  font:500 12px/1 var(--mono);color:var(--accent);background:var(--accent-soft);
+  border:1px solid var(--border);padding:5px 7px;letter-spacing:.04em;flex:none;
+}
+.subhead{font:400 13.5px/1.5 var(--sans);color:var(--muted);margin:0 0 22px;max-width:62ch}
+h3{
+  font:500 11.5px/1 var(--sans);text-transform:uppercase;letter-spacing:.13em;
+  color:var(--muted);margin:30px 0 12px;padding-bottom:8px;border-bottom:1px solid var(--border);
+}
+p{margin:0 0 14px;max-width:66ch}
+p.lead{max-width:66ch}
+ul,ol{margin:0 0 14px;padding-left:1.25em;max-width:66ch}
+li{margin-bottom:7px}
+strong{font-weight:600;color:var(--ink)}
+em{font-style:italic}
+a{color:var(--accent)}
+code{
+  font:400 13px/1.4 var(--mono);background:var(--surface-2);
+  border:1px solid var(--border);padding:1px 4px;color:var(--ink);
+}
+hr{border:0;border-top:1px solid var(--border);margin:34px 0}
+
+/* ---------- spreadsheet component ---------- */
+.sheetwrap{overflow-x:auto;border:1px solid var(--border-strong);background:var(--surface);margin:0 0 8px}
+table.sheet{border-collapse:collapse;width:100%;min-width:480px}
+table.sheet th.col{
+  background:var(--surface-3);color:var(--muted);
+  font:500 10.5px/1 var(--mono);letter-spacing:.08em;text-align:center;
+  border:1px solid var(--border);padding:6px 8px;position:relative;
+}
+table.sheet th.rowh{
+  background:var(--surface-3);color:var(--muted);
+  font:400 10.5px/1 var(--mono);text-align:center;width:2.4rem;
+  border:1px solid var(--border);padding:6px 4px;font-variant-numeric:tabular-nums;
+}
+table.sheet td{
+  border:1px solid var(--border);padding:7px 10px;vertical-align:top;
+  font:400 13px/1.45 var(--sans);color:var(--ink-2);
+}
+table.sheet td.lbl{color:var(--ink);font-weight:500}
+table.sheet td.f{font-family:var(--mono);font-size:12.5px;color:var(--accent);cursor:copy;position:relative;white-space:nowrap}
+table.sheet td.f:hover{background:var(--accent-soft)}
+table.sheet td.f.copied{background:var(--verify-soft);color:var(--verify)}
+table.sheet td.f.copied::after{content:"copied";font:500 9.5px/1 var(--sans);letter-spacing:.1em;text-transform:uppercase;margin-left:8px;opacity:.8}
+table.sheet td.f.failed::after{content:"select manually";font:500 9.5px/1 var(--sans);letter-spacing:.08em;text-transform:uppercase;margin-left:8px;color:var(--caution)}
+table.sheet td.dim{color:var(--muted);font-style:italic;font-size:12.5px}
+table.sheet td.ctr{text-align:center}
+table.sheet tr.tot td,table.sheet tr.tot th.rowh{background:var(--surface-2)}
+.hint{font:400 12.5px/1.5 var(--sans);color:var(--muted);margin:0 0 20px;max-width:64ch}
+.hint b{color:var(--accent);font-weight:500}
+
+/* ---------- column map ---------- */
+table.map{border-collapse:collapse;width:100%;margin-bottom:6px}
+table.map th{
+  text-align:left;font:500 10.5px/1 var(--sans);text-transform:uppercase;letter-spacing:.1em;
+  color:var(--muted);padding:0 12px 9px 0;border-bottom:1px solid var(--border-strong);
+}
+table.map td{padding:9px 12px 9px 0;border-bottom:1px solid var(--border);font-size:14px;vertical-align:baseline}
+table.map td.col{font:500 14px/1 var(--mono);color:var(--accent);width:3.4rem}
+table.map td.nm{font:400 13.5px/1.4 var(--mono);color:var(--ink)}
+table.map td.ty{color:var(--muted);font-size:13px}
+table.map td.ty b{color:var(--ink-2);font-weight:500}
+
+/* ---------- flags ---------- */
+.flag{
+  background:var(--caution-soft);border:1px solid var(--caution-edge);
+  padding:14px 17px;margin:0 0 12px;
+}
+.flag .tag{
+  font:500 10px/1 var(--sans);text-transform:uppercase;letter-spacing:.13em;
+  color:var(--caution);display:block;margin-bottom:8px;
+}
+.flag p{margin:0 0 9px;font-size:14px;color:var(--ink-2);max-width:64ch}
+.flag p:last-child{margin-bottom:0}
+.flag strong{color:var(--ink)}
+.flag code{background:transparent;border-color:var(--caution-edge)}
+
+.check{
+  background:var(--verify-soft);border:1px solid var(--verify-edge);
+  padding:14px 17px;margin:0 0 12px;
+}
+.check .tag{
+  font:500 10px/1 var(--sans);text-transform:uppercase;letter-spacing:.13em;
+  color:var(--verify);display:block;margin-bottom:8px;
+}
+.check p{margin:0;font-size:14px;color:var(--ink-2);max-width:64ch}
+.check strong{color:var(--ink)}
+.check code{background:transparent;border-color:var(--verify-edge)}
+
+/* ---------- point-losers ---------- */
+ol.losers{list-style:none;padding:0;margin:0;border-top:1px solid var(--border-strong);max-width:none}
+ol.losers li{
+  display:grid;grid-template-columns:2.2rem minmax(0,1fr) auto;gap:16px;
+  padding:15px 0;border-bottom:1px solid var(--border);margin:0;align-items:baseline;
+}
+ol.losers .n{font:500 13px/1.5 var(--mono);color:var(--caution);font-variant-numeric:tabular-nums}
+ol.losers .txt{font-size:14.2px;color:var(--ink-2);max-width:60ch}
+ol.losers .txt b{color:var(--ink);font-weight:600}
+ol.losers .ref{font:500 11px/1 var(--mono);color:var(--muted);text-decoration:none;white-space:nowrap;border-bottom:1px solid var(--border-strong);padding-bottom:2px}
+ol.losers .ref:hover{color:var(--accent);border-color:var(--accent)}
+
+/* ---------- denominator table ---------- */
+table.den{border-collapse:collapse;width:100%;min-width:520px}
+.denwrap{overflow-x:auto;margin-bottom:14px}
+table.den th{
+  text-align:left;font:500 10.5px/1.3 var(--sans);text-transform:uppercase;letter-spacing:.09em;
+  color:var(--muted);padding:0 14px 9px 0;border-bottom:1px solid var(--border-strong);vertical-align:bottom;
+}
+table.den td{padding:11px 14px 11px 0;border-bottom:1px solid var(--border);font-size:13.5px;color:var(--ink-2);vertical-align:baseline}
+table.den td.p{font:500 13px/1 var(--mono);color:var(--accent)}
+table.den td b{color:var(--ink)}
+
+/* ---------- task lists ---------- */
+.tasks{list-style:none;padding:0;margin:0;max-width:none;border-top:1px solid var(--border-strong)}
+.tasks li{margin:0;border-bottom:1px solid var(--border)}
+.tasks label{
+  display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:13px;align-items:baseline;
+  padding:12px 2px;cursor:pointer;
+}
+.tasks input{
+  appearance:none;-webkit-appearance:none;width:15px;height:15px;margin:0;
+  border:1px solid var(--border-strong);background:var(--surface);
+  position:relative;top:3px;flex:none;cursor:pointer;
+}
+.tasks input:checked{background:var(--accent);border-color:var(--accent)}
+.tasks input:checked::after{
+  content:"";position:absolute;left:4px;top:1px;width:5px;height:9px;
+  border:solid #fff;border-width:0 1.6px 1.6px 0;transform:rotate(42deg);
+}
+.tasks input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.tasks .t{font-size:14.2px;color:var(--ink-2)}
+.tasks .t b{color:var(--ink);font-weight:500}
+.tasks .kind{font:500 10px/1 var(--sans);text-transform:uppercase;letter-spacing:.1em;color:var(--muted);white-space:nowrap}
+.tasks input:checked ~ .t{color:var(--muted);text-decoration:line-through;text-decoration-color:var(--border-strong)}
+.tasks .step{font:500 12px/1.5 var(--mono);color:var(--muted);font-variant-numeric:tabular-nums}
+
+/* ---------- unverified ---------- */
+.unver{border:1px solid var(--border-strong);background:var(--surface);padding:22px 24px}
+.unver h3{margin-top:0}
+.unver ul{margin-bottom:12px}
+.unver li{font-size:14px;color:var(--ink-2)}
+footer{
+  margin-top:58px;padding-top:20px;border-top:1px solid var(--border);
+  font:400 12.5px/1.6 var(--sans);color:var(--muted);
+}
+footer code{font-size:11.5px}
+
+@media (max-width:860px){
+  .wrap{grid-template-columns:minmax(0,1fr);gap:0;padding:0 20px 72px}
+  .rail{position:static;padding:34px 0 0;order:-1}
+  .rail nav{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:0 18px}
+  header{padding-top:34px}
+  ol.losers li{grid-template-columns:1.8rem minmax(0,1fr);gap:12px}
+  ol.losers .ref{grid-column:2;justify-self:start;margin-top:4px}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+
+<div class="wrap">
+
+  <aside class="rail">
+    <div class="rail-title">Contents</div>
+    <nav>
+      <a href="#setup"><b>00</b><span>Setup</span></a>
+      <a href="#losers"><b>&#9873;</b><span>Point-losers</span></a>
+      <a href="#q1"><b>Q1</b><span>Circadian</span></a>
+      <a href="#q2"><b>Q2</b><span>Distress</span></a>
+      <a href="#q3"><b>Q3</b><span>Sleep quality</span></a>
+      <a href="#q4"><b>Q4</b><span>Stress table</span></a>
+      <a href="#q5"><b>Q5</b><span>Alcohol</span></a>
+      <a href="#q6"><b>Q6</b><span>Summary</span></a>
+      <a href="#order"><b>&#8594;</b><span>Order</span></a>
+      <a href="#inventory"><b>&#9634;</b><span>Charts</span></a>
+    </nav>
+    <div class="meter" id="meter">Charts <strong id="mcount">0 / 6</strong></div>
+  </aside>
+
+  <main>
+    <header>
+      <p class="eyebrow">MAT 102A &middot; Excel Case Study 1</p>
+      <h1>Sleep, Stress &amp; Cognition</h1>
+      <p class="standfirst">A cell-level scaffold for all six questions, with the reasoning each one is
+      actually testing. You run Excel and write the interpretation &mdash; this page holds the layout,
+      the formulas, and the places the handout will trip you.</p>
+
+      <dl class="facts">
+        <div class="fact"><dt>Observations</dt><dd>253 <small>rows 2&ndash;254</small></dd></div>
+        <div class="fact"><dt>Variables</dt><dd>27 <small>cols A&ndash;AA</small></dd></div>
+        <div class="fact"><dt>Used here</dt><dd>6</dd></div>
+        <div class="fact"><dt>Charts due</dt><dd>6</dd></div>
+        <div class="fact"><dt>Deliverable</dt><dd><small>Single PDF &middot; Canvas</small></dd></div>
+      </dl>
+      <p class="verified">Source <code>Desktop\MAT 102A\SleepStudy.csv</code> &mdash; row and column
+      counts verified against the file 2026-09-30, and they match the handout exactly. The
+      <code>C$2:C$254</code> ranges in the instructions are correct.</p>
+    </header>
+
+    <!-- ============ SETUP ============ -->
+    <section id="setup">
+      <h2><span class="qn">00</span>Setup</h2>
+      <p class="subhead">Two things to get right before a single formula goes in.</p>
+
+      <h3>Column map</h3>
+      <p>The handout gives you column C and leaves the rest to hand-counting.</p>
+      <table class="map">
+        <thead><tr><th>Col</th><th>Variable</th><th>Type</th></tr></thead>
+        <tbody>
+          <tr><td class="col">C</td><td class="nm">LarkOwl</td><td class="ty"><b>Categorical</b> &middot; Lark / Owl / Neither</td></tr>
+          <tr><td class="col">H</td><td class="nm">CognitionZscore</td><td class="ty"><b>Quantitative</b> &middot; z-score, already standardized</td></tr>
+          <tr><td class="col">I</td><td class="nm">PoorSleepQuality</td><td class="ty"><b>Quantitative</b> &middot; integer 0&ndash;20</td></tr>
+          <tr><td class="col">O</td><td class="nm">Stress</td><td class="ty"><b>Categorical</b> &middot; <code>normal</code> / <code>high</code></td></tr>
+          <tr><td class="col">P</td><td class="nm">DASScore</td><td class="ty"><b>Quantitative</b> &middot; 0&ndash;100</td></tr>
+          <tr><td class="col">R</td><td class="nm">AlcoholUse</td><td class="ty"><b>Categorical, ordinal</b> &middot; Abstain &lt; Light &lt; Moderate &lt; Heavy</td></tr>
+        </tbody>
+      </table>
+      <p class="hint">Last data column is <b>AA</b>. Everything from <b>AC</b> rightward is free
+      staging space, so the handout's <b>AG</b> start point is safely clear of your data.</p>
+
+      <h3>Staging blocks</h3>
+      <p>Five separate blocks, gapped by one column each, so no question can overwrite another's work.</p>
+      <div class="sheetwrap">
+        <table class="sheet">
+          <thead><tr><th class="col">Question</th><th class="col">Columns</th><th class="col">Holds</th></tr></thead>
+          <tbody>
+            <tr><td class="lbl">Q1</td><td class="f">AG:AI</td><td>Circadian frequency &amp; relative frequency</td></tr>
+            <tr><td class="lbl">Q2</td><td class="f">AK:AL</td><td>DASScore min / max / mean / median</td></tr>
+            <tr><td class="lbl">Q3</td><td class="f">AN:AO</td><td>PoorSleepQuality descriptive battery</td></tr>
+            <tr><td class="lbl">Q4</td><td class="f">AQ:AU</td><td>Stress &times; LarkOwl two-way table &amp; proportions</td></tr>
+            <tr><td class="lbl">Q5</td><td class="f">AW:AX &middot; BB:BE</td><td>Boxplot staging &amp; group statistics</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="hint">Formula cells on this page are click-to-copy.</p>
+
+      <div class="flag">
+        <span class="tag">Handout error &middot; Q1 bullet 2</span>
+        <p>The prose says the formula "counts how many cells from <strong>A2 to A254</strong>." That is
+        wrong. The formula it hands you (<code>C$2:C$254</code>) is correct. <strong>Trust the formula,
+        ignore the prose.</strong></p>
+      </div>
+      <div class="flag">
+        <span class="tag">Letter case</span>
+        <p>The <code>Stress</code> column holds <code>normal</code> and <code>high</code> in
+        <strong>lowercase</strong>. <code>COUNTIF</code> and <code>COUNTIFS</code> are case-insensitive,
+        so typing <code>High</code> as your table label still matches. No problem &mdash; just don't be
+        thrown when the spellings differ from the handout's.</p>
+      </div>
+    </section>
+
+    <!-- ============ POINT LOSERS ============ -->
+    <section id="losers">
+      <h2><span class="qn">&#9873;</span>The five things that cost points</h2>
+      <p class="subhead">Each is expanded in place further down. These are the ones that produce a
+      wrong answer rather than a messy one.</p>
+      <ol class="losers">
+        <li><span class="n">01</span><span class="txt">The handout's pie-chart range is ambiguous. Include the Total row and <b>the Total becomes a slice eating half the pie</b>.</span><a class="ref" href="#q1">Q1h</a></li>
+        <li><span class="n">02</span><span class="txt">Excel does not reliably enable outlier markers on box plots. <b>Two questions are unanswerable without that checkbox on</b>.</span><a class="ref" href="#q3">Q3l &middot; Q5c</a></li>
+        <li><span class="n">03</span><span class="txt">Parts b, c and d all ask for "a proportion" using <b>three different denominators</b>. c and d share a numerator and get swapped constantly.</span><a class="ref" href="#q4">Q4</a></li>
+        <li><span class="n">04</span><span class="txt">Excel rounds histogram bin edges, so <b>the axis ends are not your true min and max</b>. Use the formulas.</span><a class="ref" href="#q2">Q2b &middot; Q2c</a></li>
+        <li><span class="n">05</span><span class="txt">A <code>.csv</code> file <b>cannot store charts or formulas</b>. Save As <code>.xlsx</code> the moment you open it or you will rebuild everything.</span><a class="ref" href="#order">Step 1</a></li>
+      </ol>
+    </section>
+
+    <!-- ============ Q1 ============ -->
+    <section id="q1">
+      <h2><span class="qn">Q1</span>Circadian preference</h2>
+      <p class="subhead">Relative frequency distribution &middot; bar chart &middot; pie chart</p>
+
+      <h3>Reasoning</h3>
+      <p><code>LarkOwl</code> is <strong>categorical</strong>. You cannot take a mean of "Lark." The only
+      meaningful summaries are <strong>counts</strong> and <strong>proportions</strong> &mdash; which is
+      exactly why the question asks for a frequency distribution instead of an average.</p>
+      <p>The two paragraphs the handout drops <em>after</em> Q1 are not decoration. They are the
+      interpretive setup: past studies find roughly <strong>10% Lark, 20% Owl, 70% Neither</strong>, and
+      circadian preference "may not be settled until 22 years of age or later." So when you compare your
+      sample proportions against those benchmarks, the second fact is your explanation for any excess of
+      "Neither" in a college-age sample.</p>
+      <p><strong>That comparison is one of your strongest candidates for the Q6 summary.</strong> Q1 by
+      itself is just counting; the comparison is the statistics.</p>
+
+      <h3>Scaffold</h3>
+      <div class="sheetwrap">
+        <table class="sheet">
+          <thead><tr><th class="rowh"></th><th class="col">AG</th><th class="col">AH</th><th class="col">AI</th></tr></thead>
+          <tbody>
+            <tr><th class="rowh">1</th><td class="lbl">Circadian Preference</td><td class="lbl">Frequency</td><td class="lbl">Relative Frequency</td></tr>
+            <tr><th class="rowh">2</th><td>Lark</td><td class="f">=COUNTIF($C$2:$C$254,AG2)</td><td class="f">=AH2/$AH$5</td></tr>
+            <tr><th class="rowh">3</th><td>Owl</td><td class="dim">fill AH2 down</td><td class="dim">fill AI2 down</td></tr>
+            <tr><th class="rowh">4</th><td>Neither</td><td class="dim">fill AH2 down</td><td class="dim">fill AI2 down</td></tr>
+            <tr class="tot"><th class="rowh">5</th><td class="lbl">Total</td><td class="f">=SUM(AH2:AH4)</td><td class="f">=SUM(AI2:AI4)</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="hint"><b>Why <code>$AH$5</code> and not <code>AH5</code>:</b> the handout has you retype
+      <code>=AH3/AH5</code> and <code>=AH4/AH5</code> by hand. Anchoring the denominator lets you fill
+      down instead &mdash; and it's the habit that prevents errors in Q4, where you fill in two
+      directions at once.</p>
+
+      <div class="check">
+        <span class="tag">Self-check</span>
+        <p><code>AH5</code> must read <strong>253</strong>. <code>AI5</code> must read <strong>1</strong>.
+        If <code>AI5</code> shows 0.999999 before formatting, that's floating-point display, not an error.</p>
+      </div>
+
+      <h3>Charts</h3>
+      <ul>
+        <li><strong>1g bar chart</strong> &mdash; select <code>AG1:AH4</code>. Insert &rarr; Recommended
+        Charts &rarr; Clustered Column. Not the Total row, not the relative-frequency column.</li>
+        <li><strong>1h pie chart</strong> &mdash; select <code>AG1:AH4</code> again, same range as 1g.</li>
+        <li>Retitle both. "Chart Title" left as-is costs points on any rubric.</li>
+      </ul>
+
+      <div class="flag">
+        <span class="tag">Trap &middot; Q1h</span>
+        <p>The handout says "highlight <strong>the entire</strong> frequency distribution" for the pie
+        chart. Follow that literally &mdash; including <code>AG5:AH5</code> &mdash; and the Total becomes
+        its own slice consuming half the pie, because the total equals the sum of the parts.
+        <strong>Use <code>AG1:AH4</code>.</strong></p>
+      </div>
+
+      <h3>Parts a&ndash;f</h3>
+      <p>Read straight off the table. For c, d and e give the <strong>proportion</strong>, not the
+      count &mdash; the question says proportion.</p>
+    </section>
+
+    <!-- ============ Q2 ============ -->
+    <section id="q2">
+      <h2><span class="qn">Q2</span>Depression, anxiety &amp; stress</h2>
+      <p class="subhead">Histogram of <code>DASScore</code> &middot; shape</p>
+
+      <h3>Reasoning</h3>
+      <p><code>DASScore</code> is quantitative, so shape, center and spread are all available now. A
+      histogram answers <strong>shape</strong>.</p>
+      <p>Predict before you plot: <code>DASScore</code> is bounded below at 0, and most college students
+      are not severely distressed. A hard floor with room to run upward almost always produces a
+      <strong>right skew</strong> &mdash; a long tail toward high values. Plot it and check whether that
+      holds.</p>
+
+      <div class="flag">
+        <span class="tag">Vocabulary trap</span>
+        <p>Skew is named for the direction of the <em>tail</em>, not for where the bulk of the data sits.
+        A pile-up on the left with a tail stretching right is skewed <strong>right</strong>, even though
+        it "leans left" visually.</p>
+      </div>
+
+      <h3>Scaffold</h3>
+      <div class="sheetwrap">
+        <table class="sheet">
+          <thead><tr><th class="rowh"></th><th class="col">AK</th><th class="col">AL</th></tr></thead>
+          <tbody>
+            <tr><th class="rowh">1</th><td class="lbl">DASScore</td><td class="lbl">Value</td></tr>
+            <tr><th class="rowh">2</th><td>Minimum</td><td class="f">=MIN($P$2:$P$254)</td></tr>
+            <tr><th class="rowh">3</th><td>Maximum</td><td class="f">=MAX($P$2:$P$254)</td></tr>
+            <tr><th class="rowh">4</th><td>Mean</td><td class="f">=AVERAGE($P$2:$P$254)</td></tr>
+            <tr><th class="rowh">5</th><td>Median</td><td class="f">=MEDIAN($P$2:$P$254)</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="flag">
+        <span class="tag">Trap &middot; Q2b, Q2c</span>
+        <p>Take the minimum and maximum from <code>MIN</code> and <code>MAX</code>, <strong>not from the
+        histogram's axis</strong>. Excel picks round bin edges, so the leftmost bin may start at 0 when
+        your true minimum isn't 0, and the rightmost bin will overshoot your true maximum. The chart is
+        for shape; the formulas are for values.</p>
+      </div>
+
+      <div class="check">
+        <span class="tag">Skew confirmation &middot; Q2d</span>
+        <p>Compare <code>AL4</code> to <code>AL5</code>. Mean <strong>&gt;</strong> median means a long
+        right tail is pulling the mean up &mdash; <strong>skewed right</strong>. Mean &asymp; median means
+        roughly symmetric. Mean <strong>&lt;</strong> median means skewed left. This is a cross-check on
+        your eyeball reading, not a replacement for it &mdash; if the chart and the mean/median disagree,
+        something is wrong.</p>
+      </div>
+
+      <h3>Chart</h3>
+      <p>Select column P including the header &rarr; Insert &rarr; Recommended Charts &rarr; Histogram.
+      Retitle.</p>
+    </section>
+
+    <!-- ============ Q3 ============ -->
+    <section id="q3">
+      <h2><span class="qn">Q3</span>Sleep quality</h2>
+      <p class="subhead">Full descriptive battery on <code>PoorSleepQuality</code> &middot; fences &middot; boxplot</p>
+
+      <h3>Reasoning</h3>
+      <p>The whole toolkit on one variable: <strong>center</strong> (mean, median, mode),
+      <strong>spread</strong> (SD, range, IQR), <strong>position</strong> (quartiles),
+      <strong>unusual values</strong> (fences, outliers) &mdash; and then a boxplot that should visually
+      reproduce everything you just computed.</p>
+      <p>Part (l), "is this consistent with a&ndash;k," is the actual point of the question. You are being
+      asked to verify that a picture and a table tell the same story.</p>
+
+      <h3>Scaffold &middot; battery</h3>
+      <div class="sheetwrap">
+        <table class="sheet">
+          <thead><tr><th class="rowh"></th><th class="col">AN</th><th class="col">AO</th></tr></thead>
+          <tbody>
+            <tr><th class="rowh">1</th><td class="lbl">PoorSleepQuality</td><td class="lbl">Value</td></tr>
+            <tr><th class="rowh">2</th><td>Mean</td><td class="f">=AVERAGE($I$2:$I$254)</td></tr>
+            <tr><th class="rowh">3</th><td>Median</td><td class="f">=MEDIAN($I$2:$I$254)</td></tr>
+            <tr><th class="rowh">4</th><td>Mode</td><td class="f">=MODE($I$2:$I$254)</td></tr>
+            <tr><th class="rowh">5</th><td>StDev (sample)</td><td class="f">=STDEV.S($I$2:$I$254)</td></tr>
+            <tr><th class="rowh">6</th><td>Maximum</td><td class="f">=MAX($I$2:$I$254)</td></tr>
+            <tr><th class="rowh">7</th><td>Minimum</td><td class="f">=MIN($I$2:$I$254)</td></tr>
+            <tr><th class="rowh">8</th><td>Range</td><td class="f">=AO6-AO7</td></tr>
+            <tr><th class="rowh">9</th><td>Q1</td><td class="f">=QUARTILE($I$2:$I$254,1)</td></tr>
+            <tr><th class="rowh">10</th><td>Q3</td><td class="f">=QUARTILE($I$2:$I$254,3)</td></tr>
+            <tr><th class="rowh">11</th><td>IQR</td><td class="f">=AO10-AO9</td></tr>
+            <tr><th class="rowh">12</th><td>Lower fence</td><td class="f">=AO9-1.5*AO11</td></tr>
+            <tr><th class="rowh">13</th><td>Upper fence</td><td class="f">=AO10+1.5*AO11</td></tr>
+            <tr><th class="rowh">14</th><td># below lower fence</td><td class="f">=COUNTIF($I$2:$I$254,"&lt;"&amp;AO12)</td></tr>
+            <tr><th class="rowh">15</th><td># above upper fence</td><td class="f">=COUNTIF($I$2:$I$254,"&gt;"&amp;AO13)</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>Scaffold &middot; naming the outliers (3k)</h3>
+      <p>Part k asks <em>what</em> the outliers are, not just how many. Pull the largest values down and
+      compare each against your upper fence.</p>
+      <div class="sheetwrap">
+        <table class="sheet">
+          <thead><tr><th class="rowh"></th><th class="col">AN</th><th class="col">AO</th></tr></thead>
+          <tbody>
+            <tr><th class="rowh">17</th><td class="lbl">Largest values</td><td class="f">=LARGE($I$2:$I$254,1)</td></tr>
+            <tr><th class="rowh">18</th><td class="dim">&mdash;</td><td class="f">=LARGE($I$2:$I$254,2)</td></tr>
+            <tr><th class="rowh">19</th><td class="dim">&mdash;</td><td class="f">=LARGE($I$2:$I$254,3)</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="hint">Fill down until a value drops <b>below</b> your upper fence. Everything above the
+      fence is an outlier, and those are what you list. Mirror with <code>SMALL(...)</code> if
+      <code>AO14</code> is nonzero.</p>
+
+      <h3>Four traps in this block</h3>
+      <div class="flag">
+        <span class="tag">01 &middot; Sample vs population SD</span>
+        <p>The question says <em>sample</em> standard deviation. <code>STDEV.S</code> divides by
+        n&minus;1. <code>STDEV.P</code> divides by n and is <strong>the wrong answer here</strong>.</p>
+      </div>
+      <div class="flag">
+        <span class="tag">02 &middot; MODE returns one value</span>
+        <p>If two values tie for most frequent, Excel silently reports whichever appears first in the
+        column. Worth a sentence in your writeup if you suspect a tie. (If nothing repeated at all,
+        <code>MODE</code> returns <code>#N/A</code> &mdash; not a risk with 253 integer scores on a
+        0&ndash;20 scale, but that's what the error would mean.)</p>
+      </div>
+      <div class="flag">
+        <span class="tag">03 &middot; QUARTILE may not match your hand calculation</span>
+        <p>Excel's <code>QUARTILE</code> (identical to <code>QUARTILE.INC</code>) interpolates between
+        data points. Many intro courses teach "the median of the lower half," which behaves more like
+        <code>QUARTILE.EXC</code> and can give a different number.</p>
+        <p><strong>The assignment tells you to use <code>QUARTILE</code>, so use it</strong> &mdash; but
+        if your notes define quartiles the other way, say so in one line. A noted discrepancy reads as
+        competence; an unexplained one reads as an error.</p>
+      </div>
+      <div class="flag">
+        <span class="tag">04 &middot; The fence rule is inference, not verified</span>
+        <p>The scaffold above uses <code>Q1 &minus; 1.5&times;IQR</code> and
+        <code>Q3 + 1.5&times;IQR</code>, which is the standard formal rule. The question says "the formal
+        rule <em>discussed in class</em>," and there are no MAT 102A notes in this workspace to check
+        against. <strong>Confirm against your notes before you commit.</strong></p>
+      </div>
+
+      <h3>Boxplot (3l)</h3>
+      <p>Select column I including the header &rarr; Insert &rarr; Charts &rarr; Statistical &rarr; Box
+      and Whisker.</p>
+      <div class="flag">
+        <span class="tag">Required setting</span>
+        <p>Right-click the box &rarr; Format Data Series &rarr; check <strong>Show outlier points</strong>,
+        and <strong>Show mean markers</strong> while you're there. Excel does not always enable these by
+        default, and <strong>without outlier points you cannot answer 3l honestly.</strong></p>
+      </div>
+      <p>What "consistent" means for your writeup &mdash; check all four:</p>
+      <ul>
+        <li>Box bottom = your <code>Q1</code>, box top = your <code>Q3</code>, interior line = your median.</li>
+        <li>Whisker ends stop at the most extreme values <em>inside</em> the fences &mdash; not at min and max.</li>
+        <li>The plotted outlier dots match exactly the values you listed in 3k.</li>
+        <li>The mean marker sits above the median line if the data is right-skewed. Compare <code>AO2</code> to <code>AO3</code>.</li>
+      </ul>
+    </section>
+
+    <!-- ============ Q4 ============ -->
+    <section id="q4">
+      <h2><span class="qn">Q4</span>Stress &times; circadian preference</h2>
+      <p class="subhead">Two-way table &middot; conditional distributions &middot; side-by-side bars</p>
+
+      <h3>Reasoning</h3>
+      <p>Two categorical variables. "Is there a relationship" becomes a sharper question: <strong>does the
+      proportion reporting high stress change depending on circadian group?</strong> If all three groups
+      report high stress at about the same rate, there is no association. If they differ substantially,
+      there is.</p>
+      <p><strong>This is where students lose points, and here is exactly why.</strong> Parts b, c and d
+      all ask for "a proportion" but use three different denominators:</p>
+
+      <div class="denwrap">
+        <table class="den">
+          <thead><tr><th>Part</th><th>Numerator</th><th>Denominator</th><th>Name</th></tr></thead>
+          <tbody>
+            <tr><td class="p">4b</td><td>all high-stress students</td><td><b>253</b> &mdash; everyone</td><td>marginal proportion</td></tr>
+            <tr><td class="p">4c</td><td>Lark <b>and</b> high stress</td><td>all <b>high-stress</b> students</td><td>conditional on <em>stress</em></td></tr>
+            <tr><td class="p">4d</td><td>Lark <b>and</b> high stress</td><td>all <b>Larks</b></td><td>conditional on <em>group</em></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p>4c and 4d have the <strong>same numerator</strong> and different denominators, so they produce
+      different numbers. If you can say out loud why "the proportion of high-stress students who are
+      Larks" and "the proportion of Larks who are high-stress" are different questions, you have the
+      skill this question tests.</p>
+      <p>Only <strong>4d</strong> answers "is there a relationship" &mdash; it holds the group fixed and
+      compares stress rates across groups.</p>
+
+      <h3>Scaffold &middot; the table</h3>
+      <div class="sheetwrap">
+        <table class="sheet">
+          <thead><tr><th class="rowh"></th><th class="col">AQ</th><th class="col">AR</th><th class="col">AS</th><th class="col">AT</th><th class="col">AU</th></tr></thead>
+          <tbody>
+            <tr><th class="rowh">1</th><td class="dim">leave blank</td><td class="lbl">Lark</td><td class="lbl">Owl</td><td class="lbl">Neither</td><td class="lbl">Total</td></tr>
+            <tr><th class="rowh">2</th><td class="lbl">high</td><td class="f">=COUNTIFS($O$2:$O$254,$AQ2,$C$2:$C$254,AR$1)</td><td class="dim">fill right</td><td class="dim">fill right</td><td class="f">=SUM(AR2:AT2)</td></tr>
+            <tr><th class="rowh">3</th><td class="lbl">normal</td><td class="dim">fill down</td><td class="dim">fill down</td><td class="dim">fill down</td><td class="f">=SUM(AR3:AT3)</td></tr>
+            <tr class="tot"><th class="rowh">4</th><td class="lbl">Total</td><td class="f">=SUM(AR2:AR3)</td><td class="dim">fill right</td><td class="dim">fill right</td><td class="f">=SUM(AR4:AT4)</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="hint"><b>The mixed references are the lesson.</b> <code>$AQ2</code> locks the
+      <em>column</em>, so row labels always come from AQ while the row floats. <code>AR$1</code> locks the
+      <em>row</em>, so column headers always come from row 1 while the column floats. That's what lets one
+      formula fill in two directions. Get this and two-way tables stop being tedious.</p>
+
+      <div class="check">
+        <span class="tag">Self-check</span>
+        <p><code>AU4</code> must read <strong>253</strong>. Also confirm
+        <code>=SUM(AU2:AU3)</code> equals <code>=SUM(AR4:AT4)</code> &mdash; summing the margins two
+        different ways is a free error check.</p>
+      </div>
+
+      <h3>Scaffold &middot; the three proportions</h3>
+      <div class="sheetwrap">
+        <table class="sheet">
+          <thead><tr><th class="rowh"></th><th class="col">AQ</th><th class="col">AR</th><th class="col">answers</th></tr></thead>
+          <tbody>
+            <tr><th class="rowh">6</th><td class="lbl">P(high stress)</td><td class="f">=AU2/$AU$4</td><td class="ctr">4b</td></tr>
+            <tr><th class="rowh">7</th><td class="lbl">P(Lark | high stress)</td><td class="f">=AR2/$AU$2</td><td class="ctr">4c</td></tr>
+            <tr><th class="rowh">8</th><td class="lbl">P(high stress | group)</td><td class="f">=AR2/AR$4</td><td class="ctr">4d, 4e</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="hint">Fill <code>AR8</code> right to <code>AT8</code> for all three groups. For
+      <b>4e</b>, read the smallest of those three values.</p>
+
+      <h3>Chart (4a)</h3>
+      <p>Select <code>AQ1:AT3</code> &mdash; the counts only, no Total row, no Total column. Insert &rarr;
+      Clustered Column.</p>
+      <ul>
+        <li><strong>"Side-by-side" means clustered, not stacked.</strong> If your bars sit on top of each
+        other you picked the wrong subtype.</li>
+        <li>Excel guesses which variable becomes the category axis and which becomes the series. If it
+        guesses wrong, use <strong>Chart Design &rarr; Switch Row/Column</strong>. To support your 4d
+        answer you want <strong>circadian group on the axis</strong> with high/normal as the two series,
+        so the three groups sit side by side for comparison.</li>
+        <li>Retitle. Add a legend back if Excel dropped it.</li>
+      </ul>
+
+      <div class="flag">
+        <span class="tag">Caution worth writing down</span>
+        <p>Check <code>AR4</code> &mdash; the number of Larks &mdash; before you lean on 4e. If that group
+        is small, its high-stress proportion rests on few students and is unstable; a couple of different
+        students would move it noticeably. <strong>Naming that limitation is a better answer than stating
+        the winner with false confidence.</strong> The handout's own "about 10% are Larks" benchmark tells
+        you what to expect.</p>
+      </div>
+    </section>
+
+    <!-- ============ Q5 ============ -->
+    <section id="q5">
+      <h2><span class="qn">Q5</span>Alcohol use &amp; cognition</h2>
+      <p class="subhead">Side-by-side boxplots &middot; group means &middot; association vs causation</p>
+
+      <h3>Reasoning</h3>
+      <p>One categorical variable (<code>AlcoholUse</code>, and note it is <strong>ordinal</strong> &mdash;
+      the categories have a natural order) against one quantitative variable
+      (<code>CognitionZscore</code>). Side-by-side boxplots are the right display: one box per group,
+      compared on a shared axis.</p>
+      <p><code>CognitionZscore</code> is a <strong>z-score</strong>, which does you a favor. It's already
+      standardized, so 0 is roughly average performance and the units are standard deviations. A
+      difference of 0.1 between group means is small; 0.8 is large. You need no outside context to judge
+      magnitude.</p>
+
+      <div class="flag">
+        <span class="tag">5f is the heaviest question on the page</span>
+        <p>The answer is <strong>no</strong>, and the reason has a name. This is an
+        <strong>observational study</strong> &mdash; students self-reported their drinking; nobody was
+        randomly assigned to drink heavily. So the groups differ in many ways besides alcohol, and any of
+        those could produce a cognition difference. That is <strong>confounding</strong>.</p>
+        <p>The abstract printed at the bottom of your handout hands you a concrete confounder: students
+        with later class start times were <em>both</em> more likely to misuse alcohol <em>and</em>
+        different in sleep and academic outcomes. Class schedule is a plausible common cause sitting
+        behind both variables. <strong>Naming a specific mechanism beats reciting "correlation is not
+        causation."</strong></p>
+        <p>Worth one more clause: <strong>reverse causation isn't excluded either.</strong> Nothing in
+        this design establishes that the drinking came before the cognitive difference.</p>
+      </div>
+
+      <h3>Scaffold &middot; boxplot staging</h3>
+      <p>Excel's Box and Whisker chart will group for you <strong>if</strong> you hand it a category
+      column immediately left of a value column. <code>AlcoholUse</code> (R) and
+      <code>CognitionZscore</code> (H) are neither adjacent nor in that order, so copy them into a clean
+      two-column block.</p>
+      <div class="sheetwrap">
+        <table class="sheet">
+          <thead><tr><th class="rowh"></th><th class="col">AW</th><th class="col">AX</th></tr></thead>
+          <tbody>
+            <tr><th class="rowh">1</th><td class="lbl">AlcoholUse</td><td class="lbl">CognitionZscore</td></tr>
+            <tr><th class="rowh">2</th><td class="f">=$R2</td><td class="f">=$H2</td></tr>
+            <tr><th class="rowh">&#8942;</th><td class="dim">fill down to row 254</td><td class="dim">fill down to row 254</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="hint">Then select <code>AW1:AX254</code> &rarr; Insert &rarr; Charts &rarr; Statistical
+      &rarr; Box and Whisker. <b>Show outlier points again</b> &mdash; 5c asks which group has an outlier,
+      and the plot cannot answer it with that setting off.</p>
+      <p class="hint"><b>Optional polish:</b> Excel orders the four boxes alphabetically (Abstain, Heavy,
+      Light, Moderate), scrambling the natural Abstain &rarr; Light &rarr; Moderate &rarr; Heavy
+      progression. To fix it, paste <code>AW:AX</code> as values, add a helper column numbering the groups
+      1&ndash;4, and sort by it. Not required &mdash; but an ordinal variable displayed out of order
+      undercuts the trend you describe in 5g.</p>
+
+      <h3>Scaffold &middot; group statistics</h3>
+      <div class="sheetwrap">
+        <table class="sheet">
+          <thead><tr><th class="rowh"></th><th class="col">BB</th><th class="col">BC</th><th class="col">BD</th><th class="col">BE</th></tr></thead>
+          <tbody>
+            <tr><th class="rowh">1</th><td class="lbl">AlcoholUse</td><td class="lbl">n</td><td class="lbl">Proportion</td><td class="lbl">Mean Z</td></tr>
+            <tr><th class="rowh">2</th><td>Abstain</td><td class="f">=COUNTIF($R$2:$R$254,BB2)</td><td class="f">=BC2/$BC$6</td><td class="f">=AVERAGEIF($R$2:$R$254,BB2,$H$2:$H$254)</td></tr>
+            <tr><th class="rowh">3</th><td>Light</td><td class="dim">fill down</td><td class="dim">fill down</td><td class="dim">fill down</td></tr>
+            <tr><th class="rowh">4</th><td>Moderate</td><td class="dim">fill down</td><td class="dim">fill down</td><td class="dim">fill down</td></tr>
+            <tr><th class="rowh">5</th><td>Heavy</td><td class="dim">fill down</td><td class="dim">fill down</td><td class="dim">fill down</td></tr>
+            <tr class="tot"><th class="rowh">6</th><td class="lbl">Total</td><td class="f">=SUM(BC2:BC5)</td><td class="f">=SUM(BD2:BD5)</td><td class="dim">&mdash;</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="check">
+        <span class="tag">Self-check</span>
+        <p><code>BC6</code> = <strong>253</strong>, <code>BD6</code> = <strong>1</strong>. If
+        <code>BC6</code> falls short of 253, a category label is misspelled or there's a fifth category
+        you haven't accounted for.</p>
+      </div>
+      <ul>
+        <li><strong>5b</strong> &rarr; the <code>Heavy</code> row of column BD.</li>
+        <li><strong>5c</strong> &rarr; read the boxplot, outlier points enabled.</li>
+        <li><strong>5d / 5e</strong> &rarr; highest and lowest values in <code>BE2:BE5</code>.</li>
+      </ul>
+
+      <h3>5g &mdash; how to judge "strong"</h3>
+      <p>Don't guess. Use two comparisons:</p>
+      <ol>
+        <li><strong>Spread of the group means against the spread within groups.</strong> Your four means
+        sit in <code>BE2:BE5</code>. If the gap between highest and lowest is small compared to the height
+        of a typical box on your chart, the association is weak &mdash; alcohol group barely moves
+        cognition relative to how much students within a single group already differ.</li>
+        <li><strong>Box overlap.</strong> If all four boxes overlap heavily on the vertical axis, knowing
+        a student's alcohol group tells you almost nothing about their cognition score. Clear separation
+        would mean a strong association.</li>
+      </ol>
+      <p>Then connect it back: <strong>a weak association makes the 5f answer easier.</strong> You can't
+      claim causation from an observational study regardless, but it's especially unwarranted when the
+      association itself is small. Note also that <code>Heavy</code> is likely the smallest group &mdash;
+      check <code>BC5</code> &mdash; so whatever you observed about it in 5c and 5d rests on few students.</p>
+    </section>
+
+    <!-- ============ Q6 ============ -->
+    <section id="q6">
+      <h2><span class="qn">Q6</span>Summary paragraph</h2>
+      <p class="subhead">One finding per question &middot; results prose, not a walkthrough</p>
+
+      <p><strong>Don't re-narrate the case study.</strong> This is a results paragraph. What to pull:</p>
+      <div class="sheetwrap">
+        <table class="sheet">
+          <thead><tr><th class="col">From</th><th class="col">The finding worth reporting</th></tr></thead>
+          <tbody>
+            <tr><td class="lbl">Q1</td><td>Sample circadian breakdown <strong>compared against</strong> the 10% / 20% benchmark, with the age explanation</td></tr>
+            <tr><td class="lbl">Q2</td><td>Shape of the distress distribution and what it implies about typical vs. extreme students</td></tr>
+            <tr><td class="lbl">Q3</td><td>Center and spread of sleep quality, plus whether outliers exist and what they represent</td></tr>
+            <tr><td class="lbl">Q4</td><td>Whether high-stress rates differ by circadian group &mdash; the <strong>4d</strong> numbers, with the small-group caution</td></tr>
+            <tr><td class="lbl">Q5</td><td>Direction <em>and size</em> of the cognition difference, plus the explicit no-causation statement</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>Rules for the prose</h3>
+      <ul>
+        <li><strong>Every claim carries its number.</strong> "Most students were Neither" is weak; the
+        proportion is the finding.</li>
+        <li><strong>Association language only.</strong> "Higher alcohol use was associated with lower mean
+        cognition scores" &mdash; never "led to," "caused," "reduced," or "affected."</li>
+        <li><strong>Name a limitation.</strong> Observational design, self-reported drinking and stress,
+        single institution, small subgroups. One sentence is enough and it reads as competence.</li>
+        <li>Past tense, third person, and no "I clicked Insert &rarr; Chart."</li>
+      </ul>
+    </section>
+
+    <!-- ============ ORDER ============ -->
+    <section id="order">
+      <h2><span class="qn">&#8594;</span>Execution order</h2>
+      <p class="subhead">Sequence matters here &mdash; each step depends on the one before it. Doing
+      charts before the tables validate means rebuilding charts.</p>
+      <ul class="tasks" id="order-list">
+        <li><label><input type="checkbox" data-k="o1"><span class="t">Open the CSV, then immediately <b>Save As <code>.xlsx</code></b> &mdash; <code>.csv</code> retains neither charts nor formulas</span><span class="kind">Step 1</span></label></li>
+        <li><label><input type="checkbox" data-k="o2"><span class="t">Build all five staging blocks. Confirm every self-check: <b>253 three times, 1 twice</b></span><span class="kind">Step 2</span></label></li>
+        <li><label><input type="checkbox" data-k="o3"><span class="t">Only now build charts &mdash; <b>a chart pointed at a broken table has to be rebuilt from scratch</b></span><span class="kind">Step 3</span></label></li>
+        <li><label><input type="checkbox" data-k="o4"><span class="t">Enable <b>Show outlier points</b> on both box plots before screenshotting</span><span class="kind">Step 4</span></label></li>
+        <li><label><input type="checkbox" data-k="o5"><span class="t">Retitle all six charts</span><span class="kind">Step 5</span></label></li>
+        <li><label><input type="checkbox" data-k="o6"><span class="t">Paste into Word, answer a&ndash;g under each, <b>write Q6 last</b></span><span class="kind">Step 6</span></label></li>
+        <li><label><input type="checkbox" data-k="o7"><span class="t">Print to PDF, then <b>confirm all six charts actually rendered</b> &mdash; pasted chart objects sometimes drop</span><span class="kind">Step 7</span></label></li>
+      </ul>
+    </section>
+
+    <!-- ============ INVENTORY ============ -->
+    <section id="inventory">
+      <h2><span class="qn">&#9634;</span>Chart inventory</h2>
+      <p class="subhead">Six charts. Every one needs a real title. Tick them off as they land in the
+      document.</p>
+      <ul class="tasks" id="chart-list">
+        <li><label><input type="checkbox" data-k="c1"><span class="t">Circadian preference &mdash; frequency</span><span class="kind">Q1g &middot; Clustered column</span></label></li>
+        <li><label><input type="checkbox" data-k="c2"><span class="t">Circadian preference &mdash; frequency</span><span class="kind">Q1h &middot; Pie</span></label></li>
+        <li><label><input type="checkbox" data-k="c3"><span class="t">DASScore distribution</span><span class="kind">Q2a &middot; Histogram</span></label></li>
+        <li><label><input type="checkbox" data-k="c4"><span class="t">PoorSleepQuality</span><span class="kind">Q3l &middot; Box &amp; whisker</span></label></li>
+        <li><label><input type="checkbox" data-k="c5"><span class="t">Stress &times; circadian group</span><span class="kind">Q4a &middot; Clustered column</span></label></li>
+        <li><label><input type="checkbox" data-k="c6"><span class="t">Cognition by alcohol group</span><span class="kind">Q5a &middot; Box &amp; whisker</span></label></li>
+      </ul>
+    </section>
+
+    <!-- ============ UNVERIFIED ============ -->
+    <section id="unverified">
+      <div class="unver">
+        <h3>Unverified for this course</h3>
+        <p>Kept separate from the rest of the page on purpose. These are assumptions, not facts, because
+        there is no MAT 102A syllabus or set of class notes in this workspace to check them against.</p>
+        <ul>
+          <li>The exact outlier-fence rule "discussed in class" &mdash; this scaffold assumes
+          <strong>1.5&times;IQR</strong>.</li>
+          <li>The quartile convention taught &mdash; this scaffold uses Excel's <code>QUARTILE</code>,
+          per the handout's explicit instruction.</li>
+          <li>Rubric weighting and late policy.</li>
+        </ul>
+        <p><strong>Confirm the first two against your notes before finalizing Q3.</strong></p>
+      </div>
+
+      <footer>
+        Companion to <code>CASE-STUDY-1-SCAFFOLD.md</code> &middot; data verified against
+        <code>SleepStudy.csv</code> (253 rows, 27 columns) on 2026-09-30. No answer values on this
+        page &mdash; every number comes out of your own workbook.
+      </footer>
+    </section>
+
+  </main>
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  /* ---- click-to-copy on formula cells ---- */
+  function copyText(t){
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      return navigator.clipboard.writeText(t);
+    }
+    return new Promise(function(res,rej){
+      try{
+        var ta=document.createElement("textarea");
+        ta.value=t;
+        ta.setAttribute("readonly","");
+        ta.style.position="fixed";
+        ta.style.top="-1000px";
+        document.body.appendChild(ta);
+        ta.select();
+        var ok=document.execCommand("copy");
+        document.body.removeChild(ta);
+        ok?res():rej();
+      }catch(e){rej(e);}
+    });
+  }
+
+  document.addEventListener("click",function(ev){
+    var cell=ev.target.closest ? ev.target.closest("td.f") : null;
+    if(!cell) return;
+    var txt=cell.textContent.trim();
+    if(txt.charAt(0)!=="=") return;
+    copyText(txt).then(function(){
+      cell.classList.remove("failed");
+      cell.classList.add("copied");
+      setTimeout(function(){cell.classList.remove("copied");},1100);
+    }).catch(function(){
+      cell.classList.add("failed");
+      setTimeout(function(){cell.classList.remove("failed");},1800);
+    });
+  });
+
+  /* ---- checkbox persistence + chart meter ---- */
+  var KEY="mat102a-cs1-progress";
+  var boxes=Array.prototype.slice.call(document.querySelectorAll(".tasks input[type=checkbox]"));
+  var state={};
+
+  try{
+    var raw=window.localStorage.getItem(KEY);
+    if(raw) state=JSON.parse(raw)||{};
+  }catch(e){ state={}; }
+
+  boxes.forEach(function(b){
+    if(state[b.dataset.k]) b.checked=true;
+  });
+
+  function meter(){
+    var list=document.querySelectorAll("#chart-list input[type=checkbox]");
+    var done=0;
+    Array.prototype.forEach.call(list,function(b){ if(b.checked) done++; });
+    var el=document.getElementById("mcount");
+    if(el) el.textContent=done+" / "+list.length;
+  }
+
+  boxes.forEach(function(b){
+    b.addEventListener("change",function(){
+      state[b.dataset.k]=b.checked;
+      try{ window.localStorage.setItem(KEY,JSON.stringify(state)); }catch(e){}
+      meter();
+    });
+  });
+
+  meter();
+})();
+</script>
+Artifact%USERPROFILE%\Desktop\MAT 102A\CASE-STUDY-1-SCAFFOLD.html
+Published — Open artifact ↗
+https://claude.ai/code/artifact/f8a26e58-73d5-4034-a0da-fe3770640260 — private until you share it.
+
+Local copy also saved to Desktop\MAT 102A\CASE-STUDY-1-SCAFFOLD.html, next to the markdown version and the CSV.
+
+What it does that the markdown couldn't
+Scaffold tables render as actual mini-spreadsheets — column letters across the top, row numbers down the left gutter. You read AO12 on the page in the same coordinate system you're typing into, instead of translating a markdown table in your head.
+
+Every formula is click-to-copy. Click the cell, it goes to your clipboard, the cell flashes green. If the sandbox blocks clipboard access it flashes amber and says select manually rather than failing silently. Twenty-eight formulas across the six questions — that's twenty-eight chances to typo a range.
+
+Two persistent checklists — the 7-step execution order and the 6-chart inventory. Ticks survive a page reload (per-browser only, nothing leaves your machine), and the rail shows a live n / 6 chart count.
+
+Three-way color semantics, so severity reads before you finish the sentence: amber = a trap that produces a wrong answer, green = an arithmetic self-check you can verify immediately (253 three times, 1 twice), indigo = structure and formulas. Nine amber flags, four green checks.
+
+A "five things that cost points" index up top, each linking to its question.
+
+One thing carried over deliberately
+The Unverified for this course block sits at the bottom, visually separated from everything else. The 1.5×IQR fence rule and the quartile convention are labeled as assumptions there, not folded in as fact — because I have no MAT 102A syllabus or class notes to check them against, and Q3i/3j explicitly say "the rule discussed in class." Confirm those two before you finalize Q3.
+
+No answer values anywhere on the page. Every number comes out of your own workbook.
+
+Still open from earlier: the assignment prompt itself lives only in this chat, nowhere on disk. Want it saved to Desktop\MAT 102A\ so the six-chart checklist has the original requirements beside it? And there's no index file for MAT 102A the way CIS 350A has INDEX.md — say the word if you want one started.

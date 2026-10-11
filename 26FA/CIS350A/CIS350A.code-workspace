@@ -1,0 +1,44 @@
+{
+  "folders": [
+    {
+      "name": "1 - Prep (student shell)",
+      "path": "Prep"
+    },
+    {
+      "name": "2 - Course Material (decks, guides, textbook)",
+      "path": "Systems Course Material"
+    },
+    {
+      "name": "3 - AIB (instructor shell)",
+      "path": "AIB"
+    },
+    {
+      "name": "4 - Root (INDEX, GOLD-CODES, _MAE)",
+      "path": "."
+    }
+  ],
+  "settings": {
+    "window.title": "claude.mae // CIS 350A - ${activeEditorShort}",
+    "files.defaultLanguage": "markdown",
+    "editor.wordWrap": "on",
+    "editor.rulers": [92],
+    "markdown.preview.breaks": true,
+    "explorer.sortOrder": "mixed",
+    "search.exclude": {
+      "**/_MAE/**/*.jsonl": true,
+      "**/_backups/**": true
+    },
+    "files.exclude": {
+      "**/.DS_Store": true,
+      "**/Thumbs.db": true
+    },
+    "files.associations": {
+      "*.md": "markdown"
+    }
+  },
+  "extensions": {
+    "recommendations": [
+      "anthropic.claude-code"
+    ]
+  }
+}

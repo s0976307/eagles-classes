@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>MAT 102A — Test 1 Aid</title>
+<style>
+  @page { size: letter portrait; margin: 0.35in; }
+  :root{
+    --ink:#111; --rule:#000; --muted:#333; --band:#e8e8e8;
+  }
+  *{ box-sizing:border-box; }
+  html,body{ margin:0; padding:0; background:#fff; color:var(--ink);
+    font-family:"Calibri","Segoe UI",Arial,sans-serif; }
+  body{ padding:0.35in; }
+  @media print { body{ padding:0; } }
+
+  .title{ display:flex; justify-content:space-between; align-items:baseline;
+    border-bottom:1.6pt solid var(--rule); padding-bottom:1pt; margin-bottom:3pt; }
+  .title h1{ font-size:11pt; margin:0; letter-spacing:.4pt; text-transform:uppercase; }
+  .title span{ font-size:6.6pt; color:var(--muted); text-transform:uppercase; letter-spacing:.3pt; }
+
+  .cols{ column-count:3; column-gap:9pt; column-rule:0.4pt solid #999;
+    font-size:7.1pt; line-height:1.24; }
+
+  section{ break-inside:avoid; margin:0 0 3.2pt; }
+  h2{ font-size:6.9pt; margin:0 0 1.2pt; text-transform:uppercase; letter-spacing:.35pt;
+    background:var(--band); padding:0.8pt 2pt; border-left:2.2pt solid var(--rule); }
+  dl{ margin:0; }
+  dt{ font-weight:700; display:inline; }
+  dd{ display:inline; margin:0; }
+  dd::after{ content:""; display:block; }
+  .row{ margin:0 0 0.6pt; }
+  .row b{ font-weight:700; }
+  .key{ font-weight:700; }
+
+  .note{ margin-top:1.2pt; padding:1pt 2pt; border:0.4pt solid #666;
+    font-size:6.8pt; }
+  .note b{ text-transform:uppercase; letter-spacing:.2pt; }
+
+  .eq{ font-family:"Cambria Math","Cambria",Georgia,serif; font-size:7.4pt; }
+  .eqlist .row{ margin:0 0 1pt; }
+
+  table{ border-collapse:collapse; width:100%; font-size:6.9pt; }
+  td{ border:0.3pt solid #777; padding:0.6pt 1.4pt; vertical-align:top; }
+  td.s{ font-family:"Cambria Math",Cambria,Georgia,serif; font-weight:700;
+    white-space:nowrap; width:1%; }
+
+  .foot{ border-top:1.2pt solid var(--rule); margin-top:2pt; padding-top:1.2pt;
+    font-size:6.6pt; letter-spacing:.2pt; text-align:center; }
+</style>
+</head>
+<body>
+
+<div class="title">
+  <h1>MAT 102A · Test 1 · Definitions &amp; Equations</h1>
+  <span>One-page aid · no examples</span>
+</div>
+
+<div class="cols">
+
+  <section>
+    <h2>Data structure</h2>
+    <div class="row"><b>Individual</b> — person or object studied.</div>
+    <div class="row"><b>Population</b> — entire group of interest.</div>
+    <div class="row"><b>Sample</b> — subset of the population studied.</div>
+    <div class="row"><b>Variable</b> — characteristic measured or recorded.</div>
+    <div class="row"><b>Data</b> — the observations collected.</div>
+    <div class="row"><b>Parameter</b> — numerical summary of a <i>population</i>.</div>
+    <div class="row"><b>Statistic</b> — numerical summary of a <i>sample</i>.</div>
+    <div class="note"><b>Lock:</b> Population → Parameter · Sample → Statistic</div>
+  </section>
+
+  <section>
+    <h2>Variable type</h2>
+    <div class="row"><b>Categorical</b> — labels or categories.</div>
+    <div class="row"><b>Quantitative</b> — numerical amounts.</div>
+    <div class="row"><b>Discrete</b> — countable quantitative values.</div>
+    <div class="row"><b>Continuous</b> — measurable quantitative values.</div>
+  </section>
+
+  <section>
+    <h2>Levels of measurement</h2>
+    <div class="row"><b>Nominal</b> — names, no order.</div>
+    <div class="row"><b>Ordinal</b> — ordered categories; differences not meaningful.</div>
+    <div class="row"><b>Interval</b> — equal differences; no meaningful zero.</div>
+    <div class="row"><b>Ratio</b> — equal differences + meaningful zero; ratios valid.</div>
+    <div class="note"><b>Order:</b> N → O → I → R = Name → Order → Interval → Ratio</div>
+  </section>
+
+  <section>
+    <h2>Sampling methods</h2>
+    <div class="row"><b>Simple random</b> — every individual equally likely; drawn from a complete list.</div>
+    <div class="row"><b>Stratified</b> — population split into subgroups; sample taken from <i>every</i> subgroup.</div>
+    <div class="row"><b>Systematic</b> — random start, then every <span class="eq">k</span>-th individual.</div>
+    <div class="row"><b>Cluster</b> — random <i>whole groups</i> selected; all members surveyed.</div>
+    <div class="row"><b>Convenience</b> — individuals easiest to reach.</div>
+    <div class="row"><b>Multistage</b> — selection through successive stages.</div>
+    <div class="note"><b>Trap:</b> stratified = <i>some</i> from every group; cluster = <i>all</i> from selected groups.</div>
+  </section>
+
+  <section>
+    <h2>Bias</h2>
+    <div class="row"><b>Sampling bias</b> — method systematically favors certain outcomes.</div>
+    <div class="row"><b>Undercoverage</b> — part of the population inadequately represented.</div>
+    <div class="row"><b>Nonresponse bias</b> — selected individuals do not respond, and responders differ systematically from non-responders.</div>
+    <div class="row"><b>Response bias</b> — answers given are systematically distorted.</div>
+    <div class="row"><b>Data-entry error</b> — information recorded incorrectly.</div>
+  </section>
+
+  <section>
+    <h2>Study type</h2>
+    <div class="row"><b>Observational study</b> — researcher observes and records; no treatment assigned.</div>
+    <div class="row"><b>Experiment</b> — researcher assigns treatments.</div>
+    <div class="row"><b>Explanatory variable</b> — used to explain or predict the response.</div>
+    <div class="row"><b>Response variable</b> — outcome measured.</div>
+    <div class="row"><b>Confounding</b> — effect of the explanatory variable cannot be separated from another variable.</div>
+    <div class="note"><b>Causation:</b> observational data support <i>association</i> only; a randomized controlled experiment can support <i>causation</i>.</div>
+  </section>
+
+  <section>
+    <h2>Experiment vocabulary</h2>
+    <div class="row"><b>Experimental unit</b> — person or object receiving a treatment.</div>
+    <div class="row"><b>Factor</b> — variable manipulated by the researcher.</div>
+    <div class="row"><b>Level</b> — specific value or category of a factor.</div>
+    <div class="row"><b>Treatment</b> — experimental condition applied (a level, or combination of levels).</div>
+    <div class="row"><b>Response</b> — outcome measured on each unit.</div>
+    <div class="row"><b>Randomization</b> — units assigned to treatments by chance; balances other variables across groups.</div>
+    <div class="row"><b>Replication</b> — each treatment applied to many units.</div>
+    <div class="row"><b>Control</b> — hold outside variables fixed; comparison/control group.</div>
+    <div class="note"><b>Principles:</b> control → randomize → replicate</div>
+  </section>
+
+  <section>
+    <h2>Graph selection</h2>
+    <div class="row"><b>Bar graph</b> — categorical data; bars <i>separated</i>; categories may be rearranged.</div>
+    <div class="row"><b>Pareto chart</b> — bar graph with categories ordered highest → lowest frequency.</div>
+    <div class="row"><b>Pie chart</b> — categorical; parts of a whole.</div>
+    <div class="row"><b>Histogram</b> — quantitative data; bars <i>touch</i>; numerical order fixed, cannot be rearranged.</div>
+    <div class="row"><b>Stem-and-leaf / dot plot</b> — quantitative; retains individual values.</div>
+  </section>
+
+  <section>
+    <h2>Center</h2>
+    <div class="row"><b>Mean</b> — arithmetic average; uses every value; <i>sensitive</i> to extreme values.</div>
+    <div class="row"><b>Median</b> — middle value of ordered data; <i>resistant</i> to extreme values.</div>
+    <div class="row"><b>Mode</b> — most frequent value or category; may be none or several.</div>
+    <div class="note"><b>Rule:</b> with outliers or strong skew, the median better represents a typical value; symmetric data → mean ≈ median.</div>
+  </section>
+
+  <section>
+    <h2>Spread</h2>
+    <div class="row"><b>Range</b> — distance from smallest to largest; uses only two values.</div>
+    <div class="row"><b>Variance</b> — mean squared deviation from the mean; units squared.</div>
+    <div class="row"><b>Standard deviation</b> — square root of the variance; typical distance of a value from the mean, in original units.</div>
+    <div class="row"><b>IQR</b> — spread of the middle 50% of the data; resistant.</div>
+    <div class="note"><b>Read:</b> small SD = values clustered near mean; large SD = values spread out. SD ≥ 0; SD = 0 only if all values identical.</div>
+  </section>
+
+  <section>
+    <h2>Position &amp; outliers</h2>
+    <div class="row"><b>z-score</b> — number of standard deviations a value lies from its mean; unitless, so it compares values from different distributions.</div>
+    <div class="row"><span class="eq">z &gt; 0</span> above the mean · <span class="eq">z &lt; 0</span> below · <span class="eq">z = 0</span> at the mean · larger <span class="eq">|z|</span> = farther from the mean.</div>
+    <div class="row"><b>Quartiles</b> — <span class="eq">Q<sub>1</sub></span> 25th percentile, <span class="eq">Q<sub>2</sub></span> median (50th), <span class="eq">Q<sub>3</sub></span> 75th percentile.</div>
+    <div class="row"><b>Percentile</b> — value at or below which that percent of the data fall.</div>
+    <div class="row"><b>Potential outlier</b> — any value below the lower fence or above the upper fence.</div>
+    <div class="row"><b>Five-number summary</b> — minimum, <span class="eq">Q<sub>1</sub></span>, <span class="eq">Q<sub>2</sub></span>, <span class="eq">Q<sub>3</sub></span>, maximum; basis of the boxplot.</div>
+  </section>
+
+  <section>
+    <h2>Symbols</h2>
+    <table>
+      <tr><td class="s">μ</td><td>population mean</td></tr>
+      <tr><td class="s">x̄</td><td>sample mean ("x-bar")</td></tr>
+      <tr><td class="s">σ</td><td>population standard deviation</td></tr>
+      <tr><td class="s">σ²</td><td>population variance</td></tr>
+      <tr><td class="s">s</td><td>sample standard deviation</td></tr>
+      <tr><td class="s">s²</td><td>sample variance</td></tr>
+      <tr><td class="s">N</td><td>population size</td></tr>
+      <tr><td class="s">n</td><td>sample size</td></tr>
+      <tr><td class="s">x</td><td>an individual observation</td></tr>
+      <tr><td class="s">Σ</td><td>sum of</td></tr>
+      <tr><td class="s">z</td><td>standardized score</td></tr>
+      <tr><td class="s">f</td><td>frequency of a category</td></tr>
+    </table>
+  </section>
+
+  <section class="eqlist">
+    <h2>Frequency equations</h2>
+    <div class="row eq">relative frequency = f / n</div>
+    <div class="row eq">percentage = relative frequency × 100%</div>
+    <div class="row eq">pie angle = relative frequency × 360°</div>
+    <div class="row eq">Σ (relative frequencies) = 1</div>
+  </section>
+
+  <section class="eqlist">
+    <h2>Center equations</h2>
+    <div class="row eq">μ = Σx / N</div>
+    <div class="row eq">x̄ = Σx / n</div>
+    <div class="row">Median: order the data. <span class="eq">n</span> odd → the middle value; <span class="eq">n</span> even → mean of the two middle values.</div>
+    <div class="row">Median position = <span class="eq">(n + 1) / 2</span> in the ordered list.</div>
+  </section>
+
+  <section class="eqlist">
+    <h2>Spread equations</h2>
+    <div class="row eq">range = maximum − minimum</div>
+    <div class="row eq">σ² = Σ(x − μ)² / N</div>
+    <div class="row eq">σ = √[ Σ(x − μ)² / N ]</div>
+    <div class="row eq">s² = Σ(x − x̄)² / (n − 1)</div>
+    <div class="row eq">s = √[ Σ(x − x̄)² / (n − 1) ]</div>
+    <div class="note">Population divides by <span class="eq">N</span>; sample divides by <span class="eq">n − 1</span>.</div>
+  </section>
+
+  <section class="eqlist">
+    <h2>z-score equations</h2>
+    <div class="row eq">population: z = (x − μ) / σ</div>
+    <div class="row eq">sample: z = (x − x̄) / s</div>
+    <div class="row">Larger <span class="eq">z</span> = farther above its own mean; compare <span class="eq">z</span> values, not raw scores.</div>
+  </section>
+
+  <section class="eqlist">
+    <h2>Quartile &amp; outlier equations</h2>
+    <div class="row"><span class="eq">Q<sub>2</sub></span> = median of all data.</div>
+    <div class="row"><span class="eq">Q<sub>1</sub></span> = median of the lower half; <span class="eq">Q<sub>3</sub></span> = median of the upper half (omit <span class="eq">Q<sub>2</sub></span> itself when <span class="eq">n</span> is odd).</div>
+    <div class="row eq">IQR = Q₃ − Q₁</div>
+    <div class="row eq">lower fence = Q₁ − 1.5(IQR)</div>
+    <div class="row eq">upper fence = Q₃ + 1.5(IQR)</div>
+    <div class="row">Outlier test: <span class="eq">x &lt; lower fence</span> or <span class="eq">x &gt; upper fence</span>.</div>
+  </section>
+
+  <section>
+    <h2>Exam loop</h2>
+    <div class="row">Who? → What variable? → What type &amp; level? → How chosen? → Bias? → Observational or experiment? → Graph or summary → Calculate → Interpret in context.</div>
+  </section>
+
+</div>
+
+<div class="foot">MAT 102A · Test 1 · definitions and equations only</div>
+
+</body>
+</html>
