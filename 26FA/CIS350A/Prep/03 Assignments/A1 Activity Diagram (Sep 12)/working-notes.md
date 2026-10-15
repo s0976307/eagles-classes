@@ -248,3 +248,57 @@ say what is compressed, justify the fix.
 2. Open pp. 51 and 53. Clear the three **VERIFY** items above.
 3. Draft in your own words, then run the self-check in `prompt-and-plan.md`.
 4. Bring the draft back for critique before submitting.
+
+---
+
+# CORRECTION, 2026-10-12: Figure 2-13 has now been seen
+
+This file was worked on 2026-10-05 **without access to the figures**, and says so honestly at
+the Q9 section: *"this is where the reduced figure defeats me, check p. 53."* Figure 2-13 is
+now in this folder as `Figure 2-13 (p53) future state.jpg`, recovered from the course
+textbook. The Q9 passage is **wrong on a fact** and must not be copied into your answer.
+
+## The error
+
+The notes above say, of the bar before `Collect, scan, and bag item`:
+
+> `Start mobile app` (Customer) and `Start sale` (POS System) happen in parallel
+
+**There is no action called `Start mobile app` on Figure 2-13.** It does not appear anywhere
+in the figure. The Customer-lane action in that position is **`Get scanner`**. `Start sale`
+in the POS System lane is correct.
+
+**Cost if used as written:** Q9 asks you to say what each bar splits or waits on. Naming an
+action that is not on the diagram is a wrong answer even where the reasoning around it is
+sound, and it is the kind of error an instructor spots instantly because the word is simply
+not there. The *structural* intuition, two things proceeding in parallel that must both
+complete before scanning can begin, is plausible and survives the correction. Only the name
+was invented.
+
+## Second thing to check with your own eyes
+
+The notes assume a **thick bar** sits immediately before `Collect, scan, and bag item`. On
+the figure, what sits there looks like the small **notched marker on the boundary of the
+dashed expansion region**, the same marker that appears again where flow leaves that region
+next to `Add item to sale`. The unambiguous **thick bars** in Figure 2-13 are the pair around
+the payment group, one just before `Make payment` and one after it.
+
+I am flagging this rather than asserting it, because the distinction between a thin fork bar
+and a region boundary marker is exactly the kind of detail I would rather you confirm at full
+zoom than take from me. If the markers are region boundaries and not bars, then Q9's "each of
+the vertical bars" in this figure refers to the payment pair, and your answer should treat
+those two.
+
+Figure 2-12, where Q9 is most likely aimed, does carry two clear thick bars in the Customer
+lane region, one before the scanning and bagging work and one after it before `Exit store`.
+
+## What this file is still good for
+
+Everything else in it checks out against the figures. The frame label `Purchase Groceries`,
+the four lanes in 2-12, the three lanes in 2-13, **Bagger** as the eliminated actor, the
+Cashier's role changing to verification rather than disappearing, the ovals being annotation
+because they cross lane boundaries, and the dashed rectangle enclosing `Scan item` and
+`Add item to sale` in 2-12. All confirmed. This was careful work done blind and it held up
+nearly everywhere; the invented action name is the one place it did not.
+
+See `FIGURES-2-12-AND-2-13-OBSERVED.md` in this folder for what is actually on both figures.
